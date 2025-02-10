@@ -1,5 +1,5 @@
-__pycache__/*
-.vscode/
-modules/__pycache__/*
 __pycache__/
+targets/
+results/
+.vscode/
 modules/__pycache__/
