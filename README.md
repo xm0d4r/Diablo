@@ -1,7 +1,7 @@
 # Diablo - Automated Security Reconnaissance
 
 ## Overview
-Diablo is an automated security reconnaissance tool designed to assist security auditors in efficiently gathering information about a target. The tool integrates various scanning modules, allowing users to analyze web services, network protocols, and potential security weaknesses with minimal manual effort.
+Diablo is an automated security reconnaissance tool designed to assist security auditors in efficiently gathering information about a target. The tool integrates various scanning modules, allowing users to analyze web services, network protocols, and potential security weaknesses with minimal manual effort. In addition, it has a profile that allows Google Dorking.
 
 ## Features
 - **Nmap Scan**: Performs network scans to detect open ports and services.
@@ -13,6 +13,7 @@ Diablo is an automated security reconnaissance tool designed to assist security 
 - **Webanalyze**: Detects technologies used by a web application.
 - **WPScan**: Scans WordPress installations for vulnerabilities.
 - **FFUF**: Performs fuzzing attacks for directory and subdomain discovery.
+- **Diablork**: Module for Google Dorking.
 
 ## Installation
 ### Prerequisites
@@ -41,6 +42,7 @@ The tool intelligently executes modules based on the detected services:
 - **Shcheck**: Runs on HTTP/HTTPS targets.
 - **TestSSL**: Runs on HTTPS targets.
 - **FFUF**: Used for directory and subdomain fuzzing.
+- **Diablork**: Module for Google Dorking.
 
 ## Output
 Results are stored in structured files under the `results/` directory:
@@ -52,6 +54,10 @@ results/
  │   ├── example.com_testssl.txt
  │   ├── example.com_wpscan.txt
  │   ├── example.com_ffuf.txt
+ │   ├── example.com_shortscan.txt
+ │   ├── example.com_shcheck.txt 
+ │   ├── example.com_netexec.txt 
+ │   ├── example.com_enum4linux.txt 
 ```
 
 ## Nmap
