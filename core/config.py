@@ -1,19 +1,13 @@
-# Configuración general de la herramienta
+# General tool settings
 
-# Ruta de los logs
+# Results path
 RESULTS_DIRECTORY = "../results"
 
-#Ruta resultados
-
-# Ruta de los módulos
+# Module path
 MODULES_DIRECTORY = "modules/"
 
-# Ruta de los targets
+# Targets route
 TARGETS_DIRECTORY = "targets/"
 
-# Nombre del archivo de salida para los logs
+# Output file name for results
 RESULTS_FILEEXTENSION = ".txt"
-
-# Opciones globales de configuración
-TIMEOUT = 30  # Tiempo de espera por defecto en segundos para cada módulo
-MAX_RETRIES = 3  # Número máximo de reintentos si un comando falla

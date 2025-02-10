@@ -116,30 +116,28 @@ def show_menu():
         time.sleep(0.4)
 
     """
-    Muestra un menú interactivo para que el usuario elija el tipo de scan.
+    Displays an interactive menu for the user to choose the type of scan.
     """
     for col in random.choice(dibujo):
         print(colors.CRED2 + col, end="")
         sys.stdout.flush()
-        #time.sleep(0.0025)
     time.sleep(1)
+    
     print("\n" + colors.ENDC + col)
-    print("Seleccione el tipo de reconocimiento que desea realizar:\n")
-    print(" 1. Broad Scope Recon")
-    print(" 2. HTTP Recon")
-    print(" 3. Google Dorking")
-    print(" 4. Exit")
+    print("Select the type of recognition you wish to perform:\n")
+    print(" 1. HTTP Recon")
+    print(" 2. Google Dorking")
+    print(" 3. Exit")
 
-    # Solicitar al usuario que seleccione un perfil
-    choice = input("\nIngrese el número correspondiente a su elección: ")
+    # Request the user to select a profile
+    choice = input("\nDesired option: ")
 
     profiles = {
-        '1': 'Broad Scope Recon',
-        '2': 'HTTP Recon',
-        '3': 'Google Dorking',
-        '4': 'Exit'
+        '1': 'HTTP Recon',
+        '2': 'Google Dorking',
+        '3': 'Exit'
     }
 
-    # Validar la opción y retornar el perfil seleccionado
+    # Validate the option and return the selected profile.
     return profiles.get(choice, None)
 

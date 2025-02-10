@@ -9,216 +9,205 @@ from datetime import datetime
 from urllib.parse import urlparse
 from config import RESULTS_DIRECTORY
 
-# Definir códigos de escape ANSI para negrita y colores
-negrita = "\033[1m"
-rojo = "\033[91m"
-verde = "\033[92m"
-amarillo = "\033[93m"
-azul = "\033[94m"
-magenta = "\033[95m"
-cyan = "\033[96m"
-blanco = "\033[97m"
+# Define ANSI escape codes for bold and colors
+bold = "\033[1m"
+blue = "\033[94m"
 reset = "\033[0m"
 
 def clean_url(target):
     """ 
-    Elimina 'http://' o 'https://', cualquier puerto especificado y el sufijo CIDR (como /16, /24, etc.) del target.
+    Remove 'http://' or 'https://', any specified port and CIDR suffix (such as /16, /24, etc.) from the target.
     """
-    # Eliminar el esquema (http:// o https://)
+    # Delete the scheme (http:// or https://)
     target = re.sub(r'^https?://', '', target)
-    # Eliminar cualquier puerto especificado (ejemplo: :80)
+    # Remove any specified port
     target = re.sub(r':\d+', '', target)
-    # Eliminar cualquier sufijo CIDR (/16, /24, etc.)
+    # Remove any CIDR suffixes (/16, /24, etc.)
     target = re.sub(r'/\d+', '', target)
     return target
 
 def execute_command(command):
     """
-    Ejecuta un comando en el sistema operativo y devuelve la salida.
+    Executes a command on the operating system and returns the output.
     """
     try:
-        print(f"\n{negrita}{azul}----------------------------------------------------------------------------------------------------")
-        print(f"                                        Herramienta: {command.split()[0]}                                                  ")
-        print(f"{negrita}{azul}----------------------------------------------------------------------------------------------------{reset}")
-        print(f"\n{negrita}Ejecutando: {command}{reset}")
+        print(f"\n{bold}{blue}----------------------------------------------------------------------------------------------------")
+        print(f"                                           Tool: {command.split()[0]}                                                   ")
+        print(f"{bold}{blue}----------------------------------------------------------------------------------------------------{reset}")
+        print(f"\n{bold}Executing: {command}{reset}")
         result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        output = result.stdout.decode('utf-8')
+        if not output:
+            print("Warning: Command output is empty.")
+            return "No output from the command was obtained."
+        return output
     except subprocess.CalledProcessError as e:
-        print(f"Error al ejecutar el comando: {command}")
-        print(f"Error: {e.stderr.decode('utf-8')}")
-        return None
+        error_msg = f"Error executing command: {command}\n"
+        error_msg += f"Standard output (stdout):\n{e.stdout.decode('utf-8') if e.stdout else 'N/A'}\n"
+        return error_msg
 
 def save_output_to_file(output, filename, target, start_time):
     """
-    Guarda la salida de un comando o el resultado de un módulo en un archivo,
-    agregando la fecha y hora de la ejecución, sin las secuencias de escape ANSI.
-    También agrega el tiempo transcurrido desde el inicio del escaneo.
+    Saves the output of a command or the result of a module to a file,
+    adding the date and time of execution, without ANSI escape sequences.
+    It also adds the elapsed time since the start of the scan.
     """
     try:
-        # Eliminar secuencias de escape ANSI (colores y otros formatos)
-        output = re.sub(r'\x1b\[[0-9;]*m', '', output)  # Elimina los colores
-        output = re.sub(r'\x1b\[[0-9]*K', '', output)  # Elimina el código de borrado de línea [2K
+        # Remove ANSI escape sequences (colors and other formats)
+        output = re.sub(r'\x1b\[[0-9;]*m', '', output)  # Removes colors
+        output = re.sub(r'\x1b\[[0-9]*K', '', output)  # Removes the line deletion code [2K
         
-        # Obtener la fecha y hora actuales
+        # Obtain current date and time
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # Si se proporcionó el tiempo de inicio, calcular el tiempo transcurrido
+        # If the start time was provided, calculate the elapsed time.
         if start_time:
             elapsed_time = datetime.now() - start_time
-            elapsed_time_str = str(elapsed_time).split('.')[0]  # Eliminar los microsegundos
+            elapsed_time_str = str(elapsed_time).split('.')[0]  # Remove microseconds
         else:
-            elapsed_time_str = "N/A"  # Si no se proporciona el tiempo de inicio, poner "N/A"
+            elapsed_time_str = "N/A"  # If start time is not provided, enter “N/A”.
         
-        # Preparar la cabecera con la fecha y tiempo transcurrido
-        header = f"\n{'='*80}\nFecha de ejecución: {timestamp}\n{'='*80}\nIniciando escaneo para el target: {target}\n"
-        header += f"Tiempo transcurrido del escaneo: {elapsed_time_str}\n{'='*80}\n\n\n"
+        # Prepare header with date and elapsed time
+        header = f"\n{'='*80}\nExecution date: {timestamp}\n{'='*80}\nInitiating scan for target: {target}\n"
+        header += f"Elapsed scan time: {elapsed_time_str}\n{'='*80}\n\n\n"
         
-        # Escribir la cabecera y el resultado en el archivo
+        # Write header and result to file
         with open(filename, 'a') as file:
             file.write(header)
             file.write(output + "\n")
     except Exception as e:
-        print(f"Error al guardar el archivo {filename}: {str(e)}")
+        print(f"Error saving file {filename}: {str(e)}")
 
 def create_folder(folder_name):
     """
-    Crea una carpeta en la ruta especificada.
+    Creates a folder in the specified path.
     """
     folder_name = clean_url(folder_name)
 
-    # Crear la ruta completa
+    # Create the complete path
     full_path = os.path.join(RESULTS_DIRECTORY, folder_name)
 
     try:
-        # Crear la carpeta si no existe
+        # Create folder if it does not exist
         os.makedirs(full_path, exist_ok=True)
     except Exception as e:
-        print(f"Error al crear la carpeta: {e}")
+        print(f"Error creating folder: {e}")
 
     return full_path
 
 def is_valid_ip_or_domain(target):
     """
-    Verifica si el input es una IP o un dominio válido.
+    Verify if the input is a valid IP or domain.
     """
-    # Comprobar si es una IP (IPv4)
+    # Check for IP (IPv4)
     ip_regex = r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
     if re.match(ip_regex, target):
         return True
 
-    # Limpiar el dominio antes de validarlo
+    # Clean the domain before validating it
     target = clean_url(target)
 
-    # Comprobar si es un dominio válido, permitiendo subdominios y guiones
+    # Check if it is a valid domain, allowing subdomains and scripts
     domain_regex = r'^(?!-)(?!.*-$)(?!.*\.\.)(?:[A-Za-z0-9-]{1,63}\.)+[A-Za-z]{2,}$'
     if re.match(domain_regex, target):
         return True
 
     return False
 
-# Manejo de Ctrl+C
+# Ctrl+C operation
 def signal_handler(sig, frame):
     global interrupted
-    print("\nSaliendo de la herramienta...")
-    print("\n🔥😈 Diablo ha finalizado. Disfruta de la fruta. 😈🔥\n")
+    print("\nExiting the tool...")
+    print("\n🔥😈 Diablo is done. Savor the spoils. 😈🔥\n")
     interrupted = True
     sys.exit(0)
 
 def get_target_from_file(target_file):
     """
-    Lee los targets de un archivo.
+    Read targets from a file.
     """
     with open(target_file, 'r') as file:
         return [line.strip() for line in file.readlines()]
 
-def verificar_servicios_nmap(target, nmap_result):
+def verify_nmap_services(target, nmap_result):
     """
-    Verifica si se encontraron servicios HTTP, HTTPS o SSL/HTTP en el resultado de Nmap.
+    Checks whether HTTP, HTTPS or SSL/HTTP services were found in the Nmap result.
     
     Args:
-        nmap_result (str): Resultado de Nmap como cadena de texto.
+        nmap_result (str): Nmap result as a string.
         
     Returns:
-        list: Lista de puertos encontrados junto con el patrón correspondiente.
+        list: List of ports found along with the corresponding pattern.
     """
-    # Expresiones regulares para buscar los servicios http, https o ssl/http
-    patrones = [
-        (r"(\d+)/tcp\s+open\s+http", 'http'),       # Para http
-        (r"(\d+)/tcp\s+open\s+https", 'https'),     # Para https
-        (r"(\d+)/tcp\s+open\s+ssl/http", 'ssl/http') # Para ssl/http
+    # Regular expressions to search for http, https or ssl/http services
+    patterns = [
+        (r"(\d+)/tcp\s+open\s+http", 'http'),       # http
+        (r"(\d+)/tcp\s+open\s+https", 'https'),     # https
+        (r"(\d+)/tcp\s+open\s+ssl/http", 'ssl/http') # ssl/http
     ]
     
-    # Usar un set para evitar puertos duplicados, pero manteniendo el protocolo
-    puertos_encontrados = {}
+    # Use a set to avoid duplicate ports, but keeping the protocol
+    found_ports = {}
 
-    # Buscar las coincidencias en el resultado de Nmap
-    for patron, protocolo in patrones:
-        coincidencias = re.findall(patron, nmap_result)
-        for puerto in coincidencias:
-            # Añadir el puerto con su protocolo solo si no está ya en el diccionario
-            puertos_encontrados[puerto] = protocolo
+    # Search for matches in the Nmap output
+    for patron, protocol in patterns:
+        matches = re.findall(patron, nmap_result)
+        for port in matches:
+            # Add the port with its protocol only if it is not already in the dictionary
+            found_ports[port] = protocol
     
-    # Convertir a lista de tuplas (protocolo, puerto)
-    puertos_unicos = [(protocolo, puerto) for puerto, protocolo in puertos_encontrados.items()]
+    # Convert to list of tuples (protocol, port)
+    unique_ports = [(protocol, port) for port, protocol in found_ports.items()]
     
-       # Pasamos la lista de puertos encontrados a la función construir_targets
-    return construir_targets(target, puertos_unicos)
+    # We pass the list of ports found to the construct_targets function
+    return built_targets(target, unique_ports)
 
 
-def construir_targets(target, puertos):
+def built_targets(target, ports):
     """
-    Construye los targets para los puertos encontrados según el servicio (http, https, ssl/http).
+    Constructs the targets for the ports found according to the service (http, https, ssl/http).
     
     Args:
-        target (str): El nombre del host o dominio.
-        puertos (list): Lista de tuplas con el protocolo y el puerto encontrado.
+        target (str): The name of the host or domain.
+        ports (list): List of tuples with the protocol and port found.
         
     Returns:
-        set: Conjunto de targets construidos.
+        set: Set of constructed targets.
     """
-    # Diccionario para mapear los servicios con sus protocolos
-    protocolos = {
+    # Dictionary for mapping the services with their protocols
+    protocols = {
         'http': 'http://',
         'https': 'https://',
-        'ssl/http': 'https://',  # SSL/HTTP también usa https como protocolo
+        'ssl/http': 'https://',  # SSL/HTTP
     }
     
-    # Conjunto para almacenar los diferentes targets
+    # Set to store the different targets
     targets = set()
     
-    # Construir los targets para cada servicio encontrado
-    for protocolo, puerto in puertos:
-        if protocolo in protocolos:
-            targets.add(f"{protocolos[protocolo]}{target}:{puerto}")
+    # Build targets for each service found
+    for protocol, port in ports:
+        if protocol in protocols:
+            targets.add(f"{protocols[protocol]}{target}:{port}")
 
-    # Devolver el conjunto de todos los targets construidos
+    # Return the set of all constructed targets
     return targets
-
-def validar_rango_ip(rango_ip):
-    try:
-        # Intenta crear un objeto IP Network a partir del rango proporcionado
-        red = ipaddress.IPv4Network(rango_ip, strict=False)
-        return None
-    except ValueError:
-        return f"El rango {rango_ip} no es válido."
 
 def check_effective_url(target):
     """
-    Obtiene la URL efectiva después de resolver cualquier redirección.
+    Gets the effective URL after resolving any redirects.
     
-    :param target: La URL objetivo a verificar.
-    :return: La URL efectiva después de redirecciones.
+    param target: The target URL to check.
+    return: The effective URL after redirects.
     """
 
-    # Verificar si el dominio es realmente válido
+    # Check if the domain is really valid
     try:
-        # Desactivar el warning de SSL no verificado
+        # Disable the SSL unverified warning
         warnings.filterwarnings("ignore", category=requests.packages.urllib3.exceptions.InsecureRequestWarning)
-        # Realiza una solicitud HEAD para obtener información sin descargar todo el contenido
+        # Make a HEAD request to obtain information without downloading all the content.
         response = requests.head(target, allow_redirects=True, timeout=10, verify=False)
         effective_url = response.url
-        #print(f"[*] Effective URL for {target}: {effective_url}")
+        
         return effective_url
     except requests.exceptions.RequestException as e:
-        #print(f"[!] Error checking effective URL for {target}: {e}")
         return None
