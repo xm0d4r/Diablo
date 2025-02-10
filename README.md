@@ -55,7 +55,7 @@ results/
 ```
 
 ## Nmap
-You can modify the `nmap` command line in `modules/nmap.py` and add the ports you want to detect.
+You can modify the `nmap` command line in `modules/nmap.py` and add the ports you want to detect or any other command of any other module.
 
 ## Future Improvements
 - Integration of additional reconnaissance tools.

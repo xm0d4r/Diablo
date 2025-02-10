@@ -1,7 +1,7 @@
 # __init__.py
 
-# Puedes importar las funciones principales o clases de cada módulo aquí,
-# para que sea más fácil acceder a ellas sin tener que importar el módulo completo.
+# You can import the main functions or classes of each module here,
+# to make it easier to access them without having to import the whole module.
 
 from core.utils import verify_nmap_services, built_targets,check_effective_url
 from .netexec import execute_netexec
