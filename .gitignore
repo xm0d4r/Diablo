@@ -1,8 +1,5 @@
 __pycache__/*
-results/*
-targets/*
 .vscode/
 modules/__pycache__/*
 __pycache__/
-targets/
 modules/__pycache__/
