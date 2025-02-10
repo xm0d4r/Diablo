@@ -1,57 +1,63 @@
 from core import execute_command, save_output_to_file, clean_url
 from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
-from core.utils import verificar_servicios_nmap
+from core.utils import verify_nmap_services
+from modules import execute_netexec, execute_enum4linux
 from datetime import datetime
 import re
 
 def execute_nmap(target):
     """
-    Ejecuta Nmap para realizar un escaneo más detallado del target y verifica si hay puertos abiertos.
-    Si se encuentran puertos abiertos, llama a verificar_servicios_nmap para construir los targets.
+    Runs Nmap for a more detailed scan of the target and checks for open ports.
+    If open ports are found, it calls verify_nmap_services to build the targets.
     """
-    # Guardar el target original
+    # Save the original target
     original_target = target
 
-    # Comprobar si el target tiene http o https y eliminarlo temporalmente
+    # Check if the target contains http or https and temporarily remove it
     target = clean_url(target)
     
-    # Establecer el tiempo de inicio
+    # Set start time
     start_time = datetime.now()
 
-    # Ejecutar Nmap
-    command = f"nmap -Pn -sS --min-rate 10000 --max-retries 3 -p 80,443,8080,8443 {target} -vv"
+    # Execute Nmap
+    command = f"nmap -Pn -sS --min-rate 10000 --max-retries 3 -p 80,443,445,8080,8443 {target} -vv"
     result = execute_command(command)
 
-    # Verificar si Nmap encontró puertos abiertos
+    # Check if Nmap found open ports
     if not is_ports_open(result):
-        print(f"No se encontraron puertos abiertos en {target}. Deteniendo ejecución de módulos.")
-        return []  # Retorna una lista vacía si no hay puertos abiertos
+        print(f"No open ports found in {target}. Stopping module execution.")
+        return []  # Return an empty list if no open ports are found
 
-    # Llamar a verificar_servicios_nmap para obtener los puertos y construir los targets
-    targets = verificar_servicios_nmap(target, result)
+    # Call verify_nmap_services to get the ports and build the targets
+    targets = verify_nmap_services(target, result)
 
     if not targets:
-        print(f"No se encontraron servicios HTTP/HTTPS/SSL para el target {target}.")
-        return []  # Retorna una lista vacía si no se encuentran puertos HTTP/HTTPS
+        print(f"No HTTP/HTTPS/SSL services were found for the target {target}.")
+        return []  # Return an empty list if no HTTP/HTTPS ports are found
 
-    # Modificar path para guardar el fichero
+    # Modify the path to save the file
     RESULTS_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
     
-    # Guardar el resultado en un archivo, pasando start_time para calcular el tiempo transcurrido
+    # Save the result to a file, passing start_time to calculate the elapsed time
     save_output_to_file(result, RESULTS_FOLDERPATH + target + '_nmap' + RESULTS_FILEEXTENSION, original_target, start_time)
 
-    # Restaurar el target original después de Nmap
+    # Restore the original target after Nmap
     target = original_target
 
-    return targets  # Retorna la lista de targets construidos
+    if "Discovered open port 445/tcp" in result:
+        print("Port 445 detected. Running NetExec and Enum4Linux...")
+        execute_netexec(target)
+        execute_enum4linux(target)
+
+    return targets  # Return the list of constructed targets
 
 
 def is_ports_open(nmap_result):
     """
-    Verifica si Nmap encontró puertos abiertos en el resultado.
+    Checks if Nmap found open ports in the result.
     """
-    # Buscamos las líneas que contienen 'open' en el resultado de Nmap
+    # Look for lines containing 'open' in the Nmap result
     open_ports = re.findall(r'\d+/tcp\s+open', nmap_result)
 
-    # Si encontramos al menos una línea que contiene un puerto abierto, devolvemos True
+    # Return True if at least one open port is found
     return bool(open_ports)

@@ -1,25 +1,25 @@
-from core import execute_command, save_output_to_file, clean_url,check_effective_url
+from core import execute_command, save_output_to_file, clean_url, check_effective_url
 from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 from datetime import datetime
 
 def execute_shcheck(target):
     """
-    Ejecuta shcheck para validar configuraciones HTTP/HTTPS en el target.
+    Runs shcheck to validate HTTP/HTTPS configurations on the target.
     """
 
-    # Establecer el tiempo de inicio
+    # Set start time
     start_time = datetime.now()
 
     effective_target = check_effective_url(target)
 
-    # Asegurar que la URL tenga una barra al final específicamente para FFUF
+    # Ensure the URL has a trailing slash, specifically for FFUF
     if not target.endswith('/'):
         target_with_slash = target + '/'
     else:
         target_with_slash = target
 
     if effective_target == target_with_slash:
-        # Comprobar si el target tiene http:// o https://
+        # Check if the target contains http:// or https://
         command = f"shcheck.py -d {effective_target}"
         result = execute_command(command)
         save_results(result, target, target, start_time)
@@ -27,17 +27,17 @@ def execute_shcheck(target):
 
 def save_results(result, target, full_target, start_time):
     """
-    Guarda los resultados del comando shcheck.
+    Saves the results of the shcheck command.
     """
-    # Limpiar el target (eliminar http:// o https://)
+    # Clean the target (remove http:// or https://)
     original_target = target
     target = clean_url(target)
 
-    # Modificar el path para guardar el archivo de resultados
+    # Modify the path to save the results file
     LOG_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
 
-    # Guardar el resultado en el archivo adecuado, añadiendo el tiempo transcurrido
-    save_output_to_file(result,LOG_FOLDERPATH + target + '_shcheck' + RESULTS_FILEEXTENSION, full_target,start_time)
+    # Save the result in the appropriate file, adding elapsed time
+    save_output_to_file(result, LOG_FOLDERPATH + target + '_shcheck' + RESULTS_FILEEXTENSION, full_target, start_time)
 
-    # Restaurar el target original después de procesar
+    # Restore the original target after processing
     target = original_target

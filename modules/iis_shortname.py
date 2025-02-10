@@ -4,23 +4,23 @@ from datetime import datetime
 
 def execute_iis_shortname(target):
     """
-    Ejecuta un escaneo para obtener los nombres cortos de archivos en IIS.
+    Runs a scan to retrieve short file names in IIS.
     """
-    # Establecer el tiempo de inicio
+    # Set start time
     start_time = datetime.now()
     
-    # Ejecutar IIS ShortName Scan (este comando puede necesitar adaptarse)
+    # Execute IIS ShortName Scan (this command may need to be adjusted)
     command = f"shortscan {target}"
     result = execute_command(command)
     
     original_target = target
     target = clean_url(target)
     
-    # Modificar path para guardar el fichero
-    RESULTS_FOLDERPATH = RESULTS_DIRECTORY+'/'+ target+'/'
+    # Modify the path to save the file
+    RESULTS_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
 
-    # Guardar el resultado en un archivo
-    save_output_to_file(result, RESULTS_FOLDERPATH + target+'_shortscan'+ RESULTS_FILEEXTENSION, original_target,start_time)
+    # Save the result to a file
+    save_output_to_file(result, RESULTS_FOLDERPATH + target + '_shortscan' + RESULTS_FILEEXTENSION, original_target, start_time)
 
-    # Restaurar el target original después de iis_shortname
+    # Restore the original target after IIS ShortName scan
     target = original_target

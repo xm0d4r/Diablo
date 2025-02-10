@@ -1,11 +1,9 @@
-import os
 import subprocess
-from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION, clean_url
+from core import RESULTS_DIRECTORY, clean_url
 
 
 def execute_diablork(domain):
 
-    original_target = domain
     domain = clean_url(domain)
 
     # Queries for Google Dorking

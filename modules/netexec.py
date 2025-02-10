@@ -4,23 +4,23 @@ from datetime import datetime
 
 def execute_netexec(target):
     """
-    Ejecuta Netexec para obtener información sobre la red SMB en el target.
+    Runs Netexec to gather SMB network information from the target.
     """
-    # Establecer el tiempo de inicio
+    # Set start time
     start_time = datetime.now()
 
     original_target = target
     target = clean_url(target)
 
-    # Ejecutar Netexec (comando SMB)
+    # Execute Netexec (SMB command)
     command = f"netexec smb {target} -u '' -p '' --shares"
     result = execute_command(command)
     
-    # Modificar path para guardar el fichero
-    RESULTS_FOLDERPATH = RESULTS_DIRECTORY+'/'+ target+'/'
+    # Modify the path to save the file
+    RESULTS_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
 
-    # Guardar el resultado en un archivo
-    save_output_to_file(result, RESULTS_FOLDERPATH + target+'_netexec'+ RESULTS_FILEEXTENSION, target,start_time)
+    # Save the result to a file
+    save_output_to_file(result, RESULTS_FOLDERPATH + target + '_netexec' + RESULTS_FILEEXTENSION, target, start_time)
 
-    # Restaurar el target original después de _enum4linux
+    # Restore the original target after _enum4linux
     target = original_target
