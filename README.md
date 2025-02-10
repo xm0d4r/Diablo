@@ -58,6 +58,7 @@ results/
  │   ├── example.com_shcheck.txt 
  │   ├── example.com_netexec.txt 
  │   ├── example.com_enum4linux.txt 
+  │  ├── example.com_dorks.html
 ```
 
 ## Nmap
