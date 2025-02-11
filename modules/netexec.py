@@ -11,7 +11,6 @@ def execute_netexec(target):
 
     # Execute Netexec (SMB command)
     command = COMMAND["netexec"].format(target=target)
-    #command = f"netexec smb {target} -u '' -p '' --shares"
     result = execute_command(command)
     tool = "netexec"
     

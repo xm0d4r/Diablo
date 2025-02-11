@@ -9,9 +9,8 @@ def execute_iis_shortname(target):
     # Set start time
     start_time = datetime.now()
     
-    # Execute IIS ShortName Scan (this command may need to be adjusted)
+    # Execute IIS ShortName Scan
     command = COMMAND["shortscan"].format(target=target)
-    #command = f"shortscan {target}"
     result = execute_command(command)
     tool = "shortscan"
     

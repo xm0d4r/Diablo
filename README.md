@@ -74,4 +74,8 @@ This tool is intended for legal security assessments only. Unauthorized use agai
 
 ---
 
-Developed for security auditors and penetration testers.
+## Collaborators
+- [xm0d4r](https://github.com/xm0d4r)
+- [Th34t0m1c](https://github.com/Th34t0m1c)
+- [gomezander](https://github.com/gomezander)
+- [agarma](https://github.com/agarma)

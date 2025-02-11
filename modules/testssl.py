@@ -25,7 +25,6 @@ def run_testssl(target):
 
     # Execute TestSSL
     command = COMMAND["testssl"].format(target=target)
-    #command = f"testssl --protocols --server-defaults -s --connect-timeout 5 --openssl-timeout 5 {target}"
     result = execute_command(command)
     tool = "testssl"
     

@@ -10,6 +10,8 @@ Each target should be listed on a separate line within the text file located in 
 example.com
 sub.example.com
 10.0.0.1
+http://example.com
+https://example.com/
 ```
 
 ## Usage

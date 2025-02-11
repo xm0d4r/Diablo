@@ -11,7 +11,6 @@ def execute_enum4linux(target):
 
     # Run Enum4linux
     command = COMMAND["enum4linux"].format(target=target)
-    #command = f"enum4linux -a {target}"
     result = execute_command(command)
     tool = "enum4linux"
     

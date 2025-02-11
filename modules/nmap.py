@@ -22,7 +22,6 @@ def execute_nmap(target):
 
     # Execute Nmap
     command = COMMAND["nmap"].format(target=target)
-    #command = f"nmap -Pn -sS --min-rate 10000 --max-retries 3 -p 80,443,445,8080,8443 {target} -vv"
     result = execute_command(command)
 
     # Check if Nmap found open ports

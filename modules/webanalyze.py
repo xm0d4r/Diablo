@@ -21,7 +21,6 @@ def execute_webanalyze(target):
     if effective_target == target_with_slash:
         # Execute Webanalyze
         command = COMMAND["webanalyze"].format(target=target)
-        #command = f"webanalyze -apps ../dependencies/webanalyze/technologies.json -host {target}"
         result = execute_command(command)
         tool = "webanalyze"
 

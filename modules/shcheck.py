@@ -23,7 +23,6 @@ def execute_shcheck(original_target):
     if effective_target == target:
         # Execute shcheck
         command = COMMAND["shcheck"].format(target=target)
-        #command = f"shcheck.py -d {effective_target}"
         result = execute_command(command)
         tool = "shcheck"
         process_tool(original_target, result, tool, start_time)

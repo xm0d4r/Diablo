@@ -40,14 +40,6 @@ def run_ffuf(target, original_target, start_time):
     
     # Command to run FFUF
     command = COMMAND["ffuf"].format(target=target).split()
-    #command = [
-    #    "ffuf",
-    #    "-u", f"{target_with_slash}FUZZ",
-    #    "-w", "../dependencies/ffuf/test.txt",
-    #    "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
-    #    "-c",
-    #    "-ac"
-    #]
 
     print(f"\n{bold}{blue}----------------------------------------------------------------------------------------------------")
     print(f"                                            Tool: ffuf                                                     ")
