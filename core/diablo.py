@@ -8,8 +8,10 @@ from modules import execute_ffuf
 from modules import execute_shcheck
 from modules import execute_testssl
 from modules import execute_diablork
+from html import generate_html
 from utils import create_folder,is_valid_ip_or_domain,signal_handler,get_target_from_file
 from menu import show_menu
+from config import RESULTS_DIRECTORY
 
 # Define ANSI escape codes for bold and colors
 bold = "\033[1m"
@@ -49,6 +51,8 @@ def run_profile(profile, targets):
             for module in modules:
                 for constructed_target in built_targets:
                     module(constructed_target)  # We execute each module for each target built
+            
+            generate_html(RESULTS_DIRECTORY,target)
 
         elif profile == "Google Dorking":
             execute_diablork(target)

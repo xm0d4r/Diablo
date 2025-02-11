@@ -4,7 +4,6 @@ import re
 import sys
 import requests
 import warnings
-import ipaddress
 from datetime import datetime
 from urllib.parse import urlparse
 from config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
