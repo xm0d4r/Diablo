@@ -4,3 +4,4 @@ results/
 .vscode/
 modules/__pycache__/
 cofiguration/__pycache__/
+.gitignore
