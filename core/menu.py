@@ -125,7 +125,7 @@ def show_menu():
     
     print("\n" + colors.ENDC + col)
     print("Select the type of recognition you wish to perform:\n")
-    print(" 1. HTTP Recon")
+    print(" 1. Recon")
     print(" 2. Google Dorking")
     print(" 3. Exit")
 

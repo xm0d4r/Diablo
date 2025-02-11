@@ -33,7 +33,7 @@ def run_profile(profile, targets):
         print(f"{rojo}                                        Profile: {profile}                                                       {rojo}")
         print(f"{rojo}----------------------------------------------------------------------------------------------------{rojo}{reset} ")
 
-        if profile == "HTTP Recon":
+        if profile == "Recon":
             # First run Nmap
             built_targets = execute_nmap(target)
             if not built_targets:
