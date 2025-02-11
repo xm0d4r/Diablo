@@ -15,7 +15,7 @@ from config import RESULTS_DIRECTORY
 
 # Define ANSI escape codes for bold and colors
 bold = "\033[1m"
-rojo = "\033[91m"
+red = "\033[91m"
 reset = "\033[0m"
 
 
@@ -31,9 +31,9 @@ def run_profile(profile, targets):
     """
     for target in targets:
         create_folder(target)
-        print(f"\n{rojo}{bold}----------------------------------------------------------------------------------------------------{rojo} ")
-        print(f"{rojo}                                        Profile: {profile}                                                       {rojo}")
-        print(f"{rojo}----------------------------------------------------------------------------------------------------{rojo}{reset} ")
+        print(f"\n{red}{bold}----------------------------------------------------------------------------------------------------{red} ")
+        print(f"{red}                                        Profile: {profile}                                                       {red}")
+        print(f"{red}----------------------------------------------------------------------------------------------------{red}{reset} ")
 
         if profile == "Recon":
             # First run Nmap

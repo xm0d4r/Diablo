@@ -2,76 +2,76 @@ import os
 from utils import clean_url
 
 def parse_nmap(results_file):
-    # Extraer puertos abiertos de Nmap
+    # Extract open ports from Nmap
     with open(results_file, 'r') as f:
         lines = f.readlines()
 
     open_ports = []
-    parsing_ports = False  # Variable para detectar cuando empieza la tabla de puertos
+    parsing_ports = False  # Variable to detect when the port table starts
 
     for line in lines:
-        # Empezamos a procesar la sección de puertos cuando encontramos "PORT     STATE    SERVICE"
+        # Start processing the ports section when we find "PORT     STATE    SERVICE"
         if line.startswith("PORT"):
             parsing_ports = True
 
-        # Si estamos en la sección de puertos, procesamos solo las líneas que contienen "open"
+        # If we are in the ports section, process only lines containing "open"
         if parsing_ports:
-            # Filtramos la información de los puertos
+            # Filter port information
             if "open" in line and ("tcp" in line or "udp" in line):
-                parts = line.split()  # Dividimos la línea en partes
-                if len(parts) >= 4:  # Nos aseguramos de que la línea tiene suficientes partes
-                    port_protocol = parts[0]  # Ejemplo: 80/tcp
-                    state = parts[1]  # Ejemplo: open
-                    service = parts[2]  # Ejemplo: http
+                parts = line.split()  # Split the line into parts
+                if len(parts) >= 4:  # Ensure the line has enough parts
+                    port_protocol = parts[0]  # Example: 80/tcp
+                    state = parts[1]  # Example: open
+                    service = parts[2]  # Example: http
                     
-                    # Añadimos solo puertos abiertos
+                    # Add only open ports
                     if state == "open":
                         open_ports.append(f"{port_protocol} (open - {service})\n")
             
-            # Si encontramos una línea en blanco después de la tabla, detenemos el parseo
+            # Stop parsing if we find a blank line after the table
             if line.strip() == "":
                 break
 
     return open_ports
 
 def parse_webanalyze(results_file):
-    # Leer el archivo Webanalyze
+    # Read the Webanalyze file
     with open(results_file, 'r') as f:
         lines = f.readlines()
 
-    # Lista para almacenar los resultados formateados
+    # List to store formatted results
     webanalyze_results = []
-    captured_urls = set()  # Usamos un conjunto para evitar duplicados de URL
+    captured_urls = set()  # Use a set to avoid duplicate URLs
 
     for line in lines:
-        # Eliminar los delimitadores de separación y las líneas innecesarias
+        # Remove separation delimiters and unnecessary lines
         if "================================================================================" in line or line.startswith("Execution date") or line.startswith("Initiating scan for target") or line.startswith("Elapsed scan time"):
-            continue  # Ignorar líneas con "================================================================================", "Execution date" y "Initiating scan for target"
+            continue  # Ignore lines with "================================================================================", "Execution date" and "Initiating scan for target"
 
-        line = line.strip()  # Limpiar espacios en blanco al principio y final
+        line = line.strip()  # Trim leading and trailing whitespace
 
-        # Si encontramos una línea con una URL (http:// o https://), comenzamos a capturar la sección
+        # If we find a line with a URL (http:// or https://), start capturing the section
         if line.startswith('http://') or line.startswith('https://'):
             url = f"<strong>{line}</strong>"
-            # Solo capturamos si no hemos procesado esta URL antes
+            # Capture only if we haven't processed this URL before
             if url not in captured_urls:
                 captured_urls.add(url)
                 if webanalyze_results:
-                    # Añadir un salto de línea entre entradas de URLs anteriores
+                    # Add a line break between previous URL entries
                     webanalyze_results.append("")
-                webanalyze_results.append(url)  # Añadir la URL detectada
-        elif line:  # Si la línea no está vacía y estamos capturando
-            webanalyze_results.append(line)  # Añadir el servicio detectado
+                webanalyze_results.append(url)  # Add the detected URL
+        elif line:  # If the line is not empty and we are capturing
+            webanalyze_results.append(line)  # Add the detected service
 
-    # Unir todos los resultados con saltos de línea entre ellos
+    # Join all results with line breaks between them
     return "\n".join(webanalyze_results)
 
 def parse_shcheck(results_file):
-    # Leer el archivo ShCheck
+    # Read the ShCheck file
     with open(results_file, 'r') as f:
         lines = f.readlines()
 
-    # Lista para almacenar los resultados formateados
+    # List to store formatted results
     missing_headers = []
     current_url = None
     current_missing_headers = []
@@ -79,25 +79,25 @@ def parse_shcheck(results_file):
     for line in lines:
         line = line.strip()
 
-        # Identificar cuando empieza un análisis de cabeceras
+        # Identify when a header analysis starts
         if line.startswith("[*] Analyzing headers of"):
-            if current_url:  # Si hay un análisis previo, agregarlo a la lista
-                # Filtrar URLs vacías o con espacios solo
+            if current_url:  # If there's a previous analysis, add it to the list
+                # Filter out empty or whitespace-only URLs
                 if current_url.strip():
                     missing_headers.append((current_url, current_missing_headers))
-            current_url = line  # Guardar la nueva URL
-            current_missing_headers = []  # Reiniciar la lista de cabeceras faltantes
+            current_url = line  # Store the new URL
+            current_missing_headers = []  # Reset the list of missing headers
         elif line.startswith("[!] Missing security header:"):
-            # Extraer el nombre del encabezado faltante
+            # Extract the missing header name
             header = line.replace("[!] Missing security header: ", "").strip()
-            if header:  # Solo agregar encabezados no vacíos
+            if header:  # Only add non-empty headers
                 current_missing_headers.append(header)
 
-    # Añadir el último conjunto de resultados
+    # Add the last set of results
     if current_url and current_url.strip():
         missing_headers.append((current_url, current_missing_headers))
 
-    # Formatear la salida para HTML
+    # Format the output for HTML
     formatted_results = []
     for url, headers in missing_headers:
         formatted_results.append(f"<strong>{url.strip()}</strong>")
@@ -107,19 +107,19 @@ def parse_shcheck(results_file):
     return formatted_results
 
 def parse_testssl(results_file):
-    # Extraer todo el contenido de TestSSL
+    # Extract all TestSSL content
     try:
         with open(results_file, 'r') as f:
             lines = f.readlines()
 
-        # Crear una lista para las ejecuciones, asegurando un espacio entre ellas
+        # Create a list for executions, ensuring space between them
         executions = []
         current_execution = []
 
         for line in lines:
             line = line.strip()
             
-            # Añadir negrita antes de las secciones importantes
+            # Add bold formatting before important sections
             if "Testing protocols via sockets except NPN+ALPN" in line:
                 if current_execution:
                     executions.append("\n".join(current_execution))
@@ -135,11 +135,11 @@ def parse_testssl(results_file):
             elif line:
                 current_execution.append(line)
 
-        # Añadir la última ejecución si existe
+        # Add the last execution if it exists
         if current_execution:
             executions.append("\n".join(current_execution))
 
-        # Añadir un espacio entre ejecuciones
+        # Add space between executions
         formatted_results = "\n\n".join(executions)
 
         return formatted_results
@@ -159,7 +159,7 @@ def generate_html(results_dir, target):
     netexec_file = os.path.join(results_dir, target, f'{target}_netexec.txt')
     wpscan_file = os.path.join(results_dir, target, f'{target}_wpscan.txt')
 
-    # Funciones para parsear cada módulo (reemplázalas según tus necesidades)
+    # Functions to parse each module (replace as needed)
     def parse_file(file_path):
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
@@ -176,14 +176,14 @@ def generate_html(results_dir, target):
     netexec_results = parse_file(netexec_file)
     wpscan_results = parse_file(wpscan_file)
 
-    # HTML con Bootstrap para mejor apariencia
+    # HTML with Bootstrap for better appearance
     html_content = f"""
     <!DOCTYPE html>
-    <html lang="es">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte de Auditoría - {target}</title>
+        <title>Audit Report - {target}</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {{ padding: 20px; background-color: #f8f9fa; }}
@@ -196,27 +196,27 @@ def generate_html(results_dir, target):
     </head>
     <body>
         <div class="container">
-            <h1 class="text-center">Reporte de Auditoría</h1>
+            <h1 class="text-center">Audit Report</h1>
             <h3 class="text-center text-muted">Target: {target}</h3>
             <hr>
 
-            {"<h2>Nmap - Puertos Abiertos</h2><pre>" + "".join(f"{port}" for port in open_ports) + "</pre>" if open_ports else ""}
-            {"<h2>Webanalyze - Servicios Detectados</h2><pre>" + services + "</pre>" if services else ""}
-            {"<h2>TestSSL - Información</h2><pre>" + testssl_info + "</pre>" if testssl_info else ""}
-            {"<h2>ShCheck - Cabeceras Faltantes</h2><pre>" + "\n".join(missing_headers) + "</pre>" if missing_headers else ""}
-            {"<h2>FFUF - Resultados Encontrados</h2><pre>" + "".join(f"{result}\n" for result in ffuf_results) + "</pre>" if ffuf_results else ""}
-            {"<h2>Enum4Linux - Resultados</h2><ul>" + "".join(f"<li>{result}</li>" for result in enum4linux_results) + "</ul>" if enum4linux_results else ""}
-            {"<h2>IIS Shortname - Resultados</h2><ul>" + "".join(f"<li>{result}</li>" for result in iis_shortname_results) + "</ul>" if iis_shortname_results else ""}
-            {"<h2>NetExec - Resultados</h2><ul>" + "".join(f"<li>{result}</li>" for result in netexec_results) + "</ul>" if netexec_results else ""}
-            {"<h2>WPScan - Resultados</h2><ul>" + "".join(f"<li>{result}</li>" for result in wpscan_results) + "</ul>" if wpscan_results else ""}
+            {"<h2>Nmap - Open Ports</h2><pre>" + "".join(f"{port}" for port in open_ports) + "</pre>" if open_ports else ""}
+            {"<h2>Webanalyze - Detected Services</h2><pre>" + services + "</pre>" if services else ""}
+            {"<h2>TestSSL - Information</h2><pre>" + testssl_info + "</pre>" if testssl_info else ""}
+            {"<h2>ShCheck - Missing Headers</h2><pre>" + "\n".join(missing_headers) + "</pre>" if missing_headers else ""}
+            {"<h2>FFUF - Found Results</h2><pre>" + "".join(f"{result}\n" for result in ffuf_results) + "</pre>" if ffuf_results else ""}
+            {"<h2>Enum4Linux - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in enum4linux_results) + "</ul>" if enum4linux_results else ""}
+            {"<h2>IIS Shortname - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in iis_shortname_results) + "</ul>" if iis_shortname_results else ""}
+            {"<h2>NetExec - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in netexec_results) + "</ul>" if netexec_results else ""}
+            {"<h2>WPScan - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in wpscan_results) + "</ul>" if wpscan_results else ""}
         </div>
     </body>
     </html>
     """
 
-    # Guardar el archivo HTML
+    # Save the HTML file
     html_file_path = os.path.join(results_dir, target, f'{target}_recon_report.html')
     with open(html_file_path, 'w') as f:
         f.write(html_content)
 
-    print(f"\nReporte HTML generado: /results/{target}_recon_report.html'")
+    print(f"\nHTML report generated: /results/{target}_recon_report.html'")
