@@ -40,9 +40,9 @@ def run_profile(profile, targets):
                 continue  # If Nmap found no open ports, or no targets could be constructed, we move on to the next target.
 
             modules = [
-                #execute_webanalyze,
-                #execute_shcheck,
-                #execute_testssl,
+                execute_webanalyze,
+                execute_shcheck,
+                execute_testssl,
                 execute_ffuf
             ]
             # Run modules sequentially
