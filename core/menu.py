@@ -133,7 +133,7 @@ def show_menu():
     choice = input("\nDesired option: ")
 
     profiles = {
-        '1': 'HTTP Recon',
+        '1': 'Recon',
         '2': 'Google Dorking',
         '3': 'Exit'
     }
