@@ -14,3 +14,4 @@ from .ffuf import execute_ffuf
 from .shcheck import execute_shcheck
 from .testssl import execute_testssl
 from .diablork import execute_diablork
+from configuration.commands import COMMAND

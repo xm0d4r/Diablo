@@ -1,5 +1,5 @@
-from core import execute_command, save_output_to_file, clean_url
-from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
+from configuration.commands import COMMAND
+from core import execute_command, process_tool
 from datetime import datetime
 
 def execute_testssl(target):
@@ -24,17 +24,9 @@ def run_testssl(target):
     start_time = datetime.now()
 
     # Execute TestSSL
-    command = f"testssl --protocols --server-defaults -s --connect-timeout 5 --openssl-timeout 5 {target}"
+    command = COMMAND["testssl"].format(target=target)
+    #command = f"testssl --protocols --server-defaults -s --connect-timeout 5 --openssl-timeout 5 {target}"
     result = execute_command(command)
+    tool = "testssl"
     
-    original_target = target
-    target = clean_url(target)
-
-    # Modify the path to save the results file
-    RESULTS_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
-    
-    # Save the result in a file, passing start_time to calculate the elapsed time
-    save_output_to_file(result, RESULTS_FOLDERPATH + target + '_testssl' + RESULTS_FILEEXTENSION, original_target, start_time)
-
-    # Restore the original target after processing
-    target = original_target
+    process_tool(target, result, tool, start_time)

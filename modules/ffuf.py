@@ -1,6 +1,7 @@
 import os
 import subprocess
 import re
+from configuration.commands import COMMAND
 from core import save_output_to_file, clean_url,check_effective_url
 from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 from datetime import datetime
@@ -17,33 +18,36 @@ def execute_ffuf(target):
     start_time = datetime.now()
 
     effective_target = check_effective_url(target)
+
+    original_target = target
     
     # Ensure that the URL has a trailing slash specifically for FFUF
     if not target.endswith('/'):
-        target_with_slash = target + '/'
+        target = target + '/'
     else:
-        target_with_slash = target
+        target = target
 
-    if effective_target == target_with_slash:
+    if effective_target == target:
 
         # Check if the target has http:// or https://
-        target_with_slash = effective_target if effective_target.endswith('/') else effective_target + '/'
+        target = effective_target if effective_target.endswith('/') else effective_target + '/'
 
         # Execute FFUF with the chosen protocol
-        run_ffuf(target_with_slash, target, start_time)
+        run_ffuf(target, original_target, start_time)
 
-def run_ffuf(target_with_slash, original_target, start_time):
+def run_ffuf(target, original_target, start_time):
     """Execute FFUF with the URL provided"""
     
     # Command to run FFUF
-    command = [
-        "ffuf",
-        "-u", f"{target_with_slash}FUZZ",
-        "-w", "../dependencies/ffuf/test.txt",
-        "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
-        "-c",
-        "-ac"
-    ]
+    command = COMMAND["ffuf"].format(target=target).split()
+    #command = [
+    #    "ffuf",
+    #    "-u", f"{target_with_slash}FUZZ",
+    #    "-w", "../dependencies/ffuf/test.txt",
+    #    "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
+    #    "-c",
+    #    "-ac"
+    #]
 
     print(f"\n{bold}{blue}----------------------------------------------------------------------------------------------------")
     print(f"                                            Tool: ffuf                                                     ")

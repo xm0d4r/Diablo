@@ -3,3 +3,4 @@ targets/
 results/
 .vscode/
 modules/__pycache__/
+cofiguration/__pycache__/

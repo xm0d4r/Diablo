@@ -7,7 +7,7 @@ import warnings
 import ipaddress
 from datetime import datetime
 from urllib.parse import urlparse
-from config import RESULTS_DIRECTORY
+from config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 
 # Define ANSI escape codes for bold and colors
 bold = "\033[1m"
@@ -24,6 +24,9 @@ def clean_url(target):
     target = re.sub(r':\d+', '', target)
     # Remove any CIDR suffixes (/16, /24, etc.)
     target = re.sub(r'/\d+', '', target)
+    # Remove trailing slash if exists
+    target = target.rstrip('/')
+    
     return target
 
 def execute_command(command):
@@ -211,3 +214,26 @@ def check_effective_url(target):
         return effective_url
     except requests.exceptions.RequestException as e:
         return None
+    
+def process_tool(target, result, tool, start_time):
+    """
+    Processes the webanalyze module by cleaning the target URL, 
+    saving the result to a file, and restoring the original target.
+
+    :param target: The original target URL
+    :param result: The result to be saved
+    :param start_time: The start time of the process
+    :return: The original target (restored)
+    """
+    original_target = target
+    target = clean_url(target)
+
+    # Modify the path to save the results file
+    results_folderpath = f"{RESULTS_DIRECTORY}/{target}/"
+
+    # Save the result in a file, adding the elapsed time
+    save_output_to_file(result, f"{results_folderpath}{target}_{tool}{RESULTS_FILEEXTENSION}", original_target, start_time)
+
+    # Restore the original target after scan
+    return original_target
+ 
