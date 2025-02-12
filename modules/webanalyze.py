@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, check_effective_url,process_tool
+from core import execute_command, check_effective_url,process_tool,target_with_slash
 from modules import execute_iis_shortname, execute_wpscan 
 from datetime import datetime
 
@@ -12,13 +12,10 @@ def execute_webanalyze(target):
 
     effective_target = check_effective_url(target)
 
-    # Ensure the URL has a trailing slash specifically for FFUF
-    if not target.endswith('/'):
-        target_with_slash = target + '/'
-    else:
-        target_with_slash = target
+    # Ensure the URL has a trailing slash
+    target_with_slashed = target_with_slash(target)
 
-    if effective_target == target_with_slash:
+    if effective_target == target_with_slashed:
         # Execute Webanalyze
         command = COMMAND["webanalyze"].format(target=target)
         result = execute_command(command)

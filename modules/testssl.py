@@ -13,19 +13,13 @@ def execute_testssl(target):
 
     else: 
         target.startswith("https://")
-        # If it has https://, run TestSSL directly
-        run_testssl(target)
+        # Set start time
+        start_time = datetime.now()
 
-
-def run_testssl(target):
-    """Runs TestSSL with the provided URL and records the elapsed time."""
-
-    # Set start time
-    start_time = datetime.now()
-
-    # Execute TestSSL
-    command = COMMAND["testssl"].format(target=target)
-    result = execute_command(command)
-    tool = "testssl"
+        # Execute TestSSL
+        command = COMMAND["testssl"].format(target=target)
+        result = execute_command(command)
+        tool = "testssl"
+        
+        process_tool(target, result, tool, start_time)
     
-    process_tool(target, result, tool, start_time)

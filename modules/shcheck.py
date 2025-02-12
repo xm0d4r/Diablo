@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, check_effective_url,process_tool
+from core import execute_command, check_effective_url,process_tool,target_with_slash
 from datetime import datetime
 
 def execute_shcheck(original_target):
@@ -14,11 +14,8 @@ def execute_shcheck(original_target):
 
     effective_target = check_effective_url(original_target)
 
-    # Ensure the URL has a trailing slash, specifically for FFUF
-    if not original_target.endswith('/'):
-        target = original_target + '/'
-    else:
-        target = original_target
+    # Ensure that the URL has a trailing slash
+    target = target_with_slash(original_target)
 
     if effective_target == target:
         # Execute shcheck

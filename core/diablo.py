@@ -2,22 +2,11 @@ import os
 import sys
 import signal
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from modules import execute_nmap
-from modules import execute_webanalyze
-from modules import execute_ffuf
-from modules import execute_shcheck
-from modules import execute_testssl
-from modules import execute_diablork
+from modules import execute_nmap,execute_webanalyze,execute_ffuf,execute_shcheck,execute_testssl,execute_diablork
 from html import generate_html
 from utils import create_folder,is_valid_ip_or_domain,signal_handler,get_target_from_file
-from menu import show_menu
+from menu import show_menu,profile_banner
 from config import RESULTS_DIRECTORY
-
-# Define ANSI escape codes for bold and colors
-bold = "\033[1m"
-red = "\033[91m"
-reset = "\033[0m"
-
 
 # Global variable to handle program interruption (Ctrl+C)
 interrupted = False
@@ -31,9 +20,7 @@ def run_profile(profile, targets):
     """
     for target in targets:
         create_folder(target)
-        print(f"\n{red}{bold}----------------------------------------------------------------------------------------------------{red} ")
-        print(f"{red}                                        Profile: {profile}                                                       {red}")
-        print(f"{red}----------------------------------------------------------------------------------------------------{red}{reset} ")
+        profile_banner(profile)
 
         if profile == "Recon":
             # First run Nmap

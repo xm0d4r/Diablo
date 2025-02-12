@@ -4,7 +4,7 @@ import random
 import sys
 import time
 
-dibujo = [r'''                , ,, ,                              
+diablo = [r'''                , ,, ,                              
                 | || |    ,/  _____  \.             
                 \_||_/    ||_/     \_||             
                   ||       \_| . . |_/              
@@ -83,10 +83,22 @@ banner = (r"""
         ░                          ░                """)
 
 class colors:
-    CRED2 = "\33[91m"
-    CBLUE2 = "\33[94m"
+    CRED2 = "\033[91m"
+    CBLUE2 = "\033[94m"
     ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    RED = "\033[91m"
 
+def ffuf_banner(command):
+    print(f"\n{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------")
+    print(f"                                            Tool: ffuf                                                     ")
+    print(f"{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------{colors.CBLUE2}")
+    print(f"\n{colors.BOLD}Ejecutando: {command}{colors.ENDC}")
+
+def profile_banner(profile):
+    print(f"\n{colors.RED}{colors.BOLD}----------------------------------------------------------------------------------------------------{colors.RED} ")
+    print(f"{colors.RED}                                        Profile: {profile}                                                       {colors.RED}")
+    print(f"{colors.RED}----------------------------------------------------------------------------------------------------{colors.RED}{colors.ENDC} ")
 
 def show_menu():
 
@@ -118,7 +130,7 @@ def show_menu():
     """
     Displays an interactive menu for the user to choose the type of scan.
     """
-    for col in random.choice(dibujo):
+    for col in random.choice(diablo):
         print(colors.CRED2 + col, end="")
         sys.stdout.flush()
     time.sleep(1)

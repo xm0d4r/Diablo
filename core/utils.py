@@ -194,6 +194,18 @@ def built_targets(target, ports):
     # Return the set of all constructed targets
     return targets
 
+def target_with_slash(target):
+    """
+    Adds a slash to the target if it does not have one.
+    
+    Args:
+        target (str): The target to check.
+        
+    Returns:
+        str: The target with a slash at the end.
+    """
+    return target if target.endswith('/') else target + '/'
+
 def check_effective_url(target):
     """
     Gets the effective URL after resolving any redirects.

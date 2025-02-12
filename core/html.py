@@ -10,25 +10,23 @@ def parse_nmap(results_file):
     parsing_ports = False  # Variable to detect when the port table starts
 
     for line in lines:
-        # Start processing the ports section when we find "PORT     STATE    SERVICE"
+        # Start processing the ports section when we find "PORT STATE SERVICE"
         if line.startswith("PORT"):
             parsing_ports = True
 
         # If we are in the ports section, process only lines containing "open"
         if parsing_ports:
-            # Filter port information
             if "open" in line and ("tcp" in line or "udp" in line):
-                parts = line.split()  # Split the line into parts
-                if len(parts) >= 4:  # Ensure the line has enough parts
-                    port_protocol = parts[0]  # Example: 80/tcp
-                    state = parts[1]  # Example: open
-                    service = parts[2]  # Example: http
+                parts = line.split()
+                if len(parts) >= 4:
+                    port_protocol = parts[0]
+                    state = parts[1]
+                    service = parts[2]
                     
                     # Add only open ports
                     if state == "open":
                         open_ports.append(f"{port_protocol} (open - {service})\n")
             
-            # Stop parsing if we find a blank line after the table
             if line.strip() == "":
                 break
 
@@ -39,14 +37,13 @@ def parse_webanalyze(results_file):
     with open(results_file, 'r') as f:
         lines = f.readlines()
 
-    # List to store formatted results
     webanalyze_results = []
     captured_urls = set()  # Use a set to avoid duplicate URLs
 
     for line in lines:
         # Remove separation delimiters and unnecessary lines
         if "================================================================================" in line or line.startswith("Execution date") or line.startswith("Initiating scan for target") or line.startswith("Elapsed scan time"):
-            continue  # Ignore lines with "================================================================================", "Execution date" and "Initiating scan for target"
+           continue 
 
         line = line.strip()  # Trim leading and trailing whitespace
 
@@ -63,7 +60,6 @@ def parse_webanalyze(results_file):
         elif line:  # If the line is not empty and we are capturing
             webanalyze_results.append(line)  # Add the detected service
 
-    # Join all results with line breaks between them
     return "\n".join(webanalyze_results)
 
 def parse_shcheck(results_file):
@@ -82,7 +78,6 @@ def parse_shcheck(results_file):
         # Identify when a header analysis starts
         if line.startswith("[*] Analyzing headers of"):
             if current_url:  # If there's a previous analysis, add it to the list
-                # Filter out empty or whitespace-only URLs
                 if current_url.strip():
                     missing_headers.append((current_url, current_missing_headers))
             current_url = line  # Store the new URL
@@ -93,7 +88,6 @@ def parse_shcheck(results_file):
             if header:  # Only add non-empty headers
                 current_missing_headers.append(header)
 
-    # Add the last set of results
     if current_url and current_url.strip():
         missing_headers.append((current_url, current_missing_headers))
 
@@ -112,7 +106,6 @@ def parse_testssl(results_file):
         with open(results_file, 'r') as f:
             lines = f.readlines()
 
-        # Create a list for executions, ensuring space between them
         executions = []
         current_execution = []
 
