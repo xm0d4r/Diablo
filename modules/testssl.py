@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, process_tool
+from core.utils import execute_command, process_tool
 from datetime import datetime
 
 def execute_testssl(target):
@@ -17,7 +17,7 @@ def execute_testssl(target):
         start_time = datetime.now()
 
         # Execute TestSSL
-        command = COMMAND["testssl"].format(target=target)
+        command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["testssl"])
         result = execute_command(command)
         tool = "testssl"
         

@@ -1,6 +1,6 @@
 from configuration.commands import COMMAND
-from core import execute_command, save_output_to_file, clean_url
-from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
+from core.utils import execute_command, save_output_to_file, clean_url
+from core.config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 from core.utils import verify_nmap_services
 from modules import execute_netexec, execute_enum4linux
 from datetime import datetime
@@ -21,7 +21,7 @@ def execute_nmap(target):
     start_time = datetime.now()
 
     # Execute Nmap
-    command = COMMAND["nmap"].format(target=target)
+    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["nmap"])
     result = execute_command(command)
 
     # Check if Nmap found open ports

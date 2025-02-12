@@ -1,5 +1,7 @@
 import os
-from utils import clean_url
+from jinja2 import Environment, FileSystemLoader
+from core.utils import clean_url
+from datetime import datetime
 
 def parse_nmap(results_file):
     # Extract open ports from Nmap
@@ -169,47 +171,27 @@ def generate_html(results_dir, target):
     netexec_results = parse_file(netexec_file)
     wpscan_results = parse_file(wpscan_file)
 
-    # HTML with Bootstrap for better appearance
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Audit Report - {target}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {{ padding: 20px; background-color: #f8f9fa; }}
-            .container {{ max-width: 900px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }}
-            h1, h2 {{ color: #333; }}
-            pre {{ background: #eef; padding: 10px; border-radius: 5px; }}
-            ul {{ list-style-type: none; padding-left: 0; }}
-            li {{ background: #f0f0f0; margin: 5px 0; padding: 5px 10px; border-radius: 5px; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1 class="text-center">Audit Report</h1>
-            <h3 class="text-center text-muted">Target: {target}</h3>
-            <hr>
+    # Create Jinja2 environment and load the template
+    env = Environment(loader=FileSystemLoader('../template/'))
+    template = env.get_template('template.html')
 
-            {"<h2>Nmap - Open Ports</h2><pre>" + "".join(f"{port}" for port in open_ports) + "</pre>" if open_ports else ""}
-            {"<h2>Webanalyze - Detected Services</h2><pre>" + services + "</pre>" if services else ""}
-            {"<h2>TestSSL - Information</h2><pre>" + testssl_info + "</pre>" if testssl_info else ""}
-            {"<h2>ShCheck - Missing Headers</h2><pre>" + "\n".join(missing_headers) + "</pre>" if missing_headers else ""}
-            {"<h2>FFUF - Found Results</h2><pre>" + "".join(f"{result}\n" for result in ffuf_results) + "</pre>" if ffuf_results else ""}
-            {"<h2>Enum4Linux - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in enum4linux_results) + "</ul>" if enum4linux_results else ""}
-            {"<h2>IIS Shortname - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in iis_shortname_results) + "</ul>" if iis_shortname_results else ""}
-            {"<h2>NetExec - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in netexec_results) + "</ul>" if netexec_results else ""}
-            {"<h2>WPScan - Results</h2><ul>" + "".join(f"<li>{result}</li>" for result in wpscan_results) + "</ul>" if wpscan_results else ""}
-        </div>
-    </body>
-    </html>
-    """
+    # Render the HTML
+    html_content = template.render(
+        target=target,
+        open_ports=open_ports,
+        services=services,
+        testssl_info=testssl_info,
+        missing_headers=missing_headers,
+        ffuf_results=ffuf_results,
+        enum4linux_results=enum4linux_results,
+        iis_shortname_results=iis_shortname_results,
+        netexec_results=netexec_results,
+        wpscan_results=wpscan_results
+    )
 
     # Save the HTML file
     html_file_path = os.path.join(results_dir, target, f'{target}_recon_report.html')
     with open(html_file_path, 'w') as f:
         f.write(html_content)
 
-    print(f"\nHTML report generated: /results/{target}_recon_report.html'")
+    print(f"\nHTML report generated: {html_file_path}")

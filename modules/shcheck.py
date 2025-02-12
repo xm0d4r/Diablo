@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, check_effective_url,process_tool,target_with_slash
+from core.utils import execute_command, check_effective_url,process_tool,target_with_slash
 from datetime import datetime
 
 def execute_shcheck(original_target):
@@ -19,7 +19,7 @@ def execute_shcheck(original_target):
 
     if effective_target == target:
         # Execute shcheck
-        command = COMMAND["shcheck"].format(target=target)
+        command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["shcheck"])
         result = execute_command(command)
         tool = "shcheck"
         process_tool(original_target, result, tool, start_time)

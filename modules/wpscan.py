@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command,process_tool
+from core.utils import execute_command,process_tool
 from datetime import datetime
 
 def execute_wpscan(target):
@@ -10,7 +10,7 @@ def execute_wpscan(target):
     start_time = datetime.now()
     
     # Execute WPScan
-    command = COMMAND["wpscan"].format(target=target)
+    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["wpscan"])
     result = execute_command(command)
     tool = "wpscan"
     

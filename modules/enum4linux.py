@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, process_tool
+from core.utils import execute_command, process_tool
 from datetime import datetime
 
 def execute_enum4linux(target):
@@ -10,7 +10,7 @@ def execute_enum4linux(target):
     start_time = datetime.now()
 
     # Run Enum4linux
-    command = COMMAND["enum4linux"].format(target=target)
+    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["enum4linux"])
     result = execute_command(command)
     tool = "enum4linux"
     

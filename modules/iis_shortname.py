@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, process_tool
+from core.utils import execute_command, process_tool
 from datetime import datetime
 
 def execute_iis_shortname(target):
@@ -10,7 +10,7 @@ def execute_iis_shortname(target):
     start_time = datetime.now()
     
     # Execute IIS ShortName Scan
-    command = COMMAND["shortscan"].format(target=target)
+    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["shortscan"])
     result = execute_command(command)
     tool = "shortscan"
     

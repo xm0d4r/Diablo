@@ -2,8 +2,9 @@ import os
 import subprocess
 import re
 from configuration.commands import COMMAND
-from core import save_output_to_file, clean_url,check_effective_url,target_with_slash,ffuf_banner
-from core import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
+from core.utils import save_output_to_file, clean_url,check_effective_url,target_with_slash
+from core.menu import ffuf_banner
+from core.config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 from datetime import datetime
 
 def execute_ffuf(target):
@@ -32,7 +33,7 @@ def run_ffuf(target, original_target, start_time):
     """Execute FFUF with the URL provided"""
     
     # Command to run FFUF
-    command = COMMAND["ffuf"].format(target=target).split()
+    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["ffuf"])
     ffuf_banner(command)
 
     # Run FFUF and capture only the results found.

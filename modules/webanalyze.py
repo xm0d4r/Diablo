@@ -1,5 +1,5 @@
 from configuration.commands import COMMAND
-from core import execute_command, check_effective_url,process_tool,target_with_slash
+from core.utils import execute_command, check_effective_url,process_tool,target_with_slash
 from modules import execute_iis_shortname, execute_wpscan 
 from datetime import datetime
 
@@ -17,7 +17,7 @@ def execute_webanalyze(target):
 
     if effective_target == target_with_slashed:
         # Execute Webanalyze
-        command = COMMAND["webanalyze"].format(target=target)
+        command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["webanalyze"])
         result = execute_command(command)
         tool = "webanalyze"
 
