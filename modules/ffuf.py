@@ -33,7 +33,7 @@ def run_ffuf(target, original_target, start_time):
     """Execute FFUF with the URL provided"""
     
     # Command to run FFUF
-    command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["ffuf"])
+    command = [part.format(target=target) if "{target}" in part else part for part in COMMAND["ffuf"]]
     ffuf_banner(command)
 
     # Run FFUF and capture only the results found.

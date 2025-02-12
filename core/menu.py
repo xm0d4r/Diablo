@@ -4,6 +4,7 @@ import random
 import sys
 import time
 
+
 diablo = [r'''                , ,, ,                              
                 | || |    ,/  _____  \.             
                 \_||_/    ||_/     \_||             
@@ -92,8 +93,8 @@ class colors:
 def ffuf_banner(command):
     print(f"\n{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------")
     print(f"                                            Tool: ffuf                                                     ")
-    print(f"{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------{colors.CBLUE2}")
-    print(f"\n{colors.BOLD}Ejecutando: {command}{colors.ENDC}")
+    print(f"{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------{colors.ENDC}")
+    print(f"\n{colors.BOLD}Executing: {" ".join(command)}{colors.ENDC}")
 
 def profile_banner(profile):
     print(f"\n{colors.RED}{colors.BOLD}----------------------------------------------------------------------------------------------------{colors.RED} ")

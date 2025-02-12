@@ -3,7 +3,7 @@ import sys
 import signal
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from modules import execute_nmap,execute_webanalyze,execute_ffuf,execute_shcheck,execute_testssl,execute_diablork
-from template.html import generate_html
+from templates.generate_html import generate_html
 from utils import create_folder,is_valid_ip_or_domain,signal_handler,get_target_from_file
 from menu import show_menu,profile_banner
 from config import RESULTS_DIRECTORY
@@ -31,8 +31,8 @@ def run_profile(profile, targets):
             modules = [
                 execute_webanalyze,
                 execute_shcheck,
-                #execute_testssl,
-                #execute_ffuf
+                execute_testssl,
+                execute_ffuf
             ]
             # Run modules sequentially
             for module in modules:

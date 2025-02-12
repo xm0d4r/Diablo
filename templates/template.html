@@ -14,10 +14,11 @@
         }
         .container {
             max-width: 900px;
-            background: #111;
+            background: #181818;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(217, 83, 72, 0.3);
+            position: relative;  /* Necesario para posicionar el logo relativo al contenedor */
         }
         h1 {
             color: #fff;
@@ -46,10 +47,19 @@
             font-weight: bold;
             color: #f8f9fa;
         }
+        /* Estilo para la imagen del logo */
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;  /* Ajusta la distancia desde el borde derecho */
+            width: 50px;  /* Ajusta el tamaño según lo necesites */
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Logo en la parte superior derecha -->
+        <img src="../../dependencies/templates/logo.png" alt="Logo" class="logo">
         <h1 class="text-center">Recon Report</h1>
         <h3 class="text-center">Target: <i>{{ target }}</i></h3>
         <hr>
@@ -76,22 +86,22 @@
 
         {% if ffuf_results %}
         <h2>FFUF - Found Results</h2>
-        <pre>{{ ffuf_results | join("\n") }}</pre>
+        <pre>{{ ffuf_results }}</pre>
         {% endif %}
 
         {% if enum4linux_results %}
         <h2>Enum4Linux - Results</h2>
-        <pre>{{ enum4linux_results | join("\n") }}</pre>
+        <pre>{{ enum4linux_results | join("")}}</pre>
         {% endif %}
 
         {% if iis_shortname_results %}
         <h2>IIS Shortname - Results</h2>
-        <pre>{{ iis_shortname_results | join("\n") }}</pre>
+        <pre>{{ iis_shortname_results }}</pre>
         {% endif %}
 
         {% if netexec_results %}
         <h2>NetExec - Results</h2>
-        <pre>{{ netexec_results | join("\n") }}</pre>
+        <pre>{{ netexec_results }}</pre>
         {% endif %}
 
         {% if wpscan_results %}

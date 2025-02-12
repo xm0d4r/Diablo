@@ -1,70 +1,70 @@
 COMMAND = {
     "enum4linux": [
-        "enum4linux",              # Comando principal
-        "-a",                      # Modo de auditoría completo
-        "{target}"                 # El objetivo (dirección IP o dominio)
+        "enum4linux",              # Main command
+        "-a",                      # Full audit mode
+        "{target}"                 # Target (IP address or domain)
     ],
     "ffuf": [
-        "ffuf",                    # Comando principal
-        "-u", "{target}FUZZ",      # URL con el lugar para insertar fuzzing
-        "-w", "../dependencies/ffuf/test.txt",   # Ruta al archivo de diccionario de palabras
-        "-H", "'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0'",  # Header User-Agent
-        "-c",                      # Mostrar resultados en color
-        "-ac"                      # Activar el modo de evitar casos de repetición
+        "ffuf",                    # Main command
+        "-u", "{target}FUZZ",      # URL with the fuzzing point (without /)
+        "-w", "../dependencies/ffuf/test.txt",   # Path to the wordlist dictionary file
+        "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",  # User-Agent header
+        "-c",                      # Show results in color
+        "-ac"                      # Enable deduplication avoidance mode
     ],
     "shortscan": [
-        "shortscan",               # Comando principal
-        "{target}"                 # El objetivo
+        "shortscan",               # Main command
+        "{target}"                 # Target
     ],
     "netexec": [
-        "netexec",                 # Comando principal
-        "smb",                     # Protocolo SMB
-        "{target}",                # El objetivo
-        "-u", "''",                # Usuario vacío para la autenticación
-        "-p", "''",                # Contraseña vacía para la autenticación
-        "--shares"                # Mostrar los recursos compartidos
+        "netexec",                 # Main command
+        "smb",                     # SMB protocol
+        "{target}",                # Target
+        "-u", "''",                # Empty username for authentication
+        "-p", "''",                # Empty password for authentication
+        "--shares"                # Show shared resources
     ],
     "nmap": [
-        "nmap",                    # Comando principal
-        "-Pn",                     # No realizar descubrimiento de hosts
-        "-sS",                     # Escaneo SYN (escaneo sigiloso)
-        "--min-rate", "10000",     # Establecer tasa mínima de paquetes por segundo
-        "--max-retries", "3",      # Número máximo de reintentos en caso de fallo
-        "-p", "80,443,445,8080,8443",  # Puertos a escanear (HTTP, HTTPS, SMB)
-        "{target}",                # El objetivo
-        "-vv"                      # Nivel de verborrea (más detalles)
+        "nmap",                    # Main command
+        "-Pn",                     # Do not perform host discovery
+        "-sS",                     # SYN scan (stealth scan)
+        "--min-rate", "10000",     # Set minimum packet rate per second
+        "--max-retries", "3",      # Maximum number of retries on failure
+        "-p", "80,443,445,8080,8443",  # Ports to scan (HTTP, HTTPS, SMB)
+        "{target}",                # Target
+        "-vv"                      # Verbosity level (more details)
     ],
     "shcheck": [
-        "shcheck.py",              # Comando principal para comprobar cabeceras
-        "-d",                      # Opción para detectar cabeceras
-        "{target}"                 # El objetivo
+        "shcheck.py",              # Main command to check headers
+        "-d",                      # Option to detect headers
+        "{target}"                 # Target
     ],
     "testssl": [
-        "testssl",                 # Comando principal
-        "--protocols",             # Mostrar los protocolos soportados
-        "--server-defaults",       # Usar la configuración predeterminada del servidor
-        "-s",                      # Comprobar todas las opciones disponibles
-        "--connect-timeout", "5",  # Establecer tiempo de espera para la conexión
-        "--openssl-timeout", "5",  # Establecer tiempo de espera para OpenSSL
-        "{target}"                 # El objetivo
+        "testssl",                 # Main command
+        "--protocols",             # Show supported protocols
+        "--server-defaults",       # Use server’s default settings
+        "-s",                      # Check all available options
+        "--connect-timeout", "5",  # Set connection timeout
+        "--openssl-timeout", "5",  # Set OpenSSL timeout
+        "{target}"                 # Target
     ],
     "webanalyze": [
-        "webanalyze",              # Comando principal
-        "-apps", "../dependencies/webanalyze/technologies.json",  # Ruta al archivo de tecnologías
-        "-host", "{target}"        # El objetivo
+        "webanalyze",              # Main command
+        "-apps", "../dependencies/webanalyze/technologies.json",  # Path to technologies file
+        "-host", "{target}"        # Target
     ],
     "wpscan": [
-        "wpscan",                  # Comando principal
-        "--url", "{target}",       # URL del objetivo
-        "--enumerate", "p",        # Enumerar plugins
-        "--random-user-agent",     # Usar un agente de usuario aleatorio
-        "--throttle", "5",         # Establecer límite de solicitudes por segundo
-        "--plugins-detection", "passive",  # Detección pasiva de plugins
-        "--plugins-version-detection", "passive",  # Detección pasiva de versiones de plugins
-        "--detection-mode", "passive",      # Modo pasivo de detección
-        "--request-timeout", "10", # Tiempo de espera para solicitudes
-        "--connect-timeout", "10", # Tiempo de espera para la conexión
-        "--disable-tls-checks",    # Deshabilitar comprobaciones TLS
-        "{target}"                 # El objetivo
+        "wpscan",                  # Main command
+        "--url", "{target}",       # Target URL
+        "--enumerate", "p",        # Enumerate plugins
+        "--random-user-agent",     # Use a random user agent
+        "--throttle", "5",         # Set request rate limit per second
+        "--plugins-detection", "passive",  # Passive plugin detection
+        "--plugins-version-detection", "passive",  # Passive plugin version detection
+        "--detection-mode", "passive",      # Passive detection mode
+        "--request-timeout", "10", # Request timeout
+        "--connect-timeout", "10", # Connection timeout
+        "--disable-tls-checks",    # Disable TLS checks
+        "{target}"                 # Target
     ]
 }
