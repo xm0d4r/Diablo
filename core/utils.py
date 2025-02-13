@@ -17,7 +17,7 @@ def clean_url(target):
     """ 
     Remove 'http://' or 'https://', any specified port and CIDR suffix (such as /16, /24, etc.) from the target.
     """
-    # Delete the scheme (http:// or https://)
+    # Remove the scheme (http:// or https://)
     target = re.sub(r'^https?://', '', target)
     # Remove any specified port
     target = re.sub(r':\d+', '', target)
@@ -25,7 +25,7 @@ def clean_url(target):
     target = re.sub(r'/\d+', '', target)
     # Remove trailing slash if exists
     target = target.rstrip('/')
-    
+   
     return target
 
 def execute_command(command):
@@ -80,11 +80,11 @@ def save_output_to_file(output, filename, target, start_time):
     except Exception as e:
         print(f"Error saving file {filename}: {str(e)}")
 
-def create_folder(folder_name):
+def create_folder(target_dir):
     """
     Creates a folder in the specified path.
     """
-    folder_name = clean_url(folder_name)
+    folder_name = clean_url(target_dir)
 
     # Create the complete path
     full_path = os.path.join(RESULTS_DIRECTORY, folder_name)
@@ -226,7 +226,7 @@ def check_effective_url(target):
     except requests.exceptions.RequestException as e:
         return None
     
-def process_tool(target, result, tool, start_time):
+def process_tool(target, result, tool, start_time, target_dir):
     """
     Processes the webanalyze module by cleaning the target URL, 
     saving the result to a file, and restoring the original target.
@@ -240,11 +240,9 @@ def process_tool(target, result, tool, start_time):
     target = clean_url(target)
 
     # Modify the path to save the results file
-    results_folderpath = f"{RESULTS_DIRECTORY}/{target}/"
+    results_folderpath = f"{target_dir}/"
 
     # Save the result in a file, adding the elapsed time
-    save_output_to_file(result, f"{results_folderpath}{target}_{tool}{RESULTS_FILEEXTENSION}", original_target, start_time)
-
+    save_output_to_file(result, f"{results_folderpath}{tool}{RESULTS_FILEEXTENSION}", original_target, start_time)
     # Restore the original target after scan
     return original_target
- 

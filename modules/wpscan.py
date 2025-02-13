@@ -2,7 +2,7 @@ from configuration.commands import COMMAND
 from core.utils import execute_command,process_tool
 from datetime import datetime
 
-def execute_wpscan(target):
+def execute_wpscan(target, target_dir):
     """
     Runs a scan to gather information about the WordPress site.
     """
@@ -14,4 +14,4 @@ def execute_wpscan(target):
     result = execute_command(command)
     tool = "wpscan"
     
-    process_tool(target, result, tool, start_time)
+    process_tool(target, result, tool, start_time, target_dir)

@@ -2,7 +2,7 @@ from configuration.commands import COMMAND
 from core.utils import execute_command, process_tool
 from datetime import datetime
 
-def execute_netexec(target):
+def execute_netexec(target, target_dir):
     """
     Runs Netexec to gather SMB network information from the target.
     """
@@ -14,4 +14,4 @@ def execute_netexec(target):
     result = execute_command(command)
     tool = "netexec"
     
-    process_tool(target, result, tool, start_time)
+    process_tool(target, result, tool, start_time, target_dir)

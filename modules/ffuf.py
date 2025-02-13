@@ -7,7 +7,7 @@ from core.menu import ffuf_banner
 from core.config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
 from datetime import datetime
 
-def execute_ffuf(target):
+def execute_ffuf(target,target_dir):
     """
     Run FFUF to perform fuzzing on a website and save only the results found.
     """
@@ -27,9 +27,9 @@ def execute_ffuf(target):
         target = target_with_slash(effective_target)
 
         # Execute FFUF with the chosen protocol
-        run_ffuf(target, original_target, start_time)
+        run_ffuf(target, original_target, start_time, target_dir)
 
-def run_ffuf(target, original_target, start_time):
+def run_ffuf(target, original_target, start_time, target_dir):
     """Execute FFUF with the URL provided"""
     
     # Command to run FFUF
@@ -56,7 +56,7 @@ def run_ffuf(target, original_target, start_time):
 
                             if total_seconds >= 2 and 0 <= req_sec <= 20:
                                 print("\nServer saturation. Stopping FFUF and continuing with the next module.")
-                                save_results(original_target, relevant_lines, start_time)  # Save the results
+                                save_results(original_target, relevant_lines, start_time, target_dir)  # Save the results
                                 process.terminate()  # Terminate the process
                                 return
 
@@ -67,12 +67,15 @@ def run_ffuf(target, original_target, start_time):
         print(f"Error running FFUF: {e}")
         return
 
-    save_results(original_target, relevant_lines, start_time)  # Save the results
+    save_results(original_target, relevant_lines, start_time, target_dir)  # Save the results
 
-def save_results(original_target, relevant_lines, start_time):
+def save_results(original_target, relevant_lines, start_time, target_dir):
     """Save the relevant results to a file"""
     target = clean_url(original_target)  # Clean the URL for use in file paths
-    results_folderpath = os.path.join(RESULTS_DIRECTORY, target)
-    os.makedirs(results_folderpath, exist_ok=True)  # Create the results directory if it doesn't exist
-    output_file_path = os.path.join(results_folderpath, f"{target}_ffuf{RESULTS_FILEEXTENSION}")
-    save_output_to_file("".join(relevant_lines), output_file_path, original_target, start_time)  # Save the output to a file
+    results_folderpath = f"{target_dir}/"
+    os.makedirs(results_folderpath, exist_ok=True)
+    output_file_path = os.path.join(results_folderpath, f"ffuf{RESULTS_FILEEXTENSION}")
+    save_output_to_file("".join(relevant_lines), output_file_path, target, start_time)  # Save the output to a file
+
+
+

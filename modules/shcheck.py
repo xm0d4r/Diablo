@@ -2,7 +2,7 @@ from configuration.commands import COMMAND
 from core.utils import execute_command, check_effective_url,process_tool,target_with_slash
 from datetime import datetime
 
-def execute_shcheck(original_target):
+def execute_shcheck(original_target, target_dir):
     """
     Runs shcheck to validate HTTP/HTTPS configurations on the target.
     """
@@ -22,4 +22,4 @@ def execute_shcheck(original_target):
         command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["shcheck"])
         result = execute_command(command)
         tool = "shcheck"
-        process_tool(original_target, result, tool, start_time)
+        process_tool(original_target, result, tool, start_time, target_dir)

@@ -2,7 +2,7 @@ from configuration.commands import COMMAND
 from core.utils import execute_command, process_tool
 from datetime import datetime
 
-def execute_enum4linux(target):
+def execute_enum4linux(target, target_dir):
     """
     Run Enum4linux to enumerate information from a Windows system.
     """
@@ -14,4 +14,4 @@ def execute_enum4linux(target):
     result = execute_command(command)
     tool = "enum4linux"
     
-    process_tool(target, result, tool, start_time)
+    process_tool(target, result, tool, start_time, target_dir)

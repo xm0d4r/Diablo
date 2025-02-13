@@ -1,19 +1,23 @@
 from configuration.commands import COMMAND
 from core.utils import execute_command, save_output_to_file, clean_url
-from core.config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
+from core.config import RESULTS_FILEEXTENSION
 from core.utils import verify_nmap_services
 from modules import execute_netexec, execute_enum4linux
 from datetime import datetime
 import re
+import os
 
-def execute_nmap(target):
+def execute_nmap(target, target_dir):
     """
     Runs Nmap for a more detailed scan of the target and checks for open ports.
     If open ports are found, it calls verify_nmap_services to build the targets.
+    
+    :param target: The target to scan
+    :param target_dir: The base directory where results should be stored
     """
     # Save the original target
     original_target = target
-
+    print("HELEEEEEE2")
     # Check if the target contains http or https and temporarily remove it
     target = clean_url(target)
     
@@ -36,19 +40,20 @@ def execute_nmap(target):
         print(f"No HTTP/HTTPS/SSL services were found for the target {target}.")
         return []  # Return an empty list if no HTTP/HTTPS ports are found
 
-    # Modify the path to save the file
-    RESULTS_FOLDERPATH = RESULTS_DIRECTORY + '/' + target + '/'
+    results_folderpath = f"{target_dir}/"
+
+    os.makedirs(results_folderpath, exist_ok=True)
     
     # Save the result to a file, passing start_time to calculate the elapsed time
-    save_output_to_file(result, RESULTS_FOLDERPATH + target + '_nmap' + RESULTS_FILEEXTENSION, original_target, start_time)
+    save_output_to_file(result, f"{results_folderpath}nmap{RESULTS_FILEEXTENSION}", original_target, start_time)
 
     # Restore the original target after Nmap
     target = original_target
 
     if "Discovered open port 445/tcp" in result:
         print("Port 445 detected. Running NetExec and Enum4Linux...")
-        execute_netexec(target)
-        execute_enum4linux(target)
+        execute_netexec(target, target_dir) 
+        execute_enum4linux(target, target_dir) 
 
     return targets  # Return the list of constructed targets
 

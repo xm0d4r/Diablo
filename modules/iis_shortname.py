@@ -2,7 +2,7 @@ from configuration.commands import COMMAND
 from core.utils import execute_command, process_tool
 from datetime import datetime
 
-def execute_iis_shortname(target):
+def execute_iis_shortname(target, target_dir):
     """
     Runs a scan to retrieve short file names in IIS.
     """
@@ -14,4 +14,4 @@ def execute_iis_shortname(target):
     result = execute_command(command)
     tool = "shortscan"
     
-    process_tool(target, result, tool, start_time)
+    process_tool(target, result, tool, start_time, target_dir)

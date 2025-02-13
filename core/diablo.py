@@ -1,11 +1,12 @@
 import os
 import sys
 import signal
+from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from modules import execute_nmap,execute_webanalyze,execute_ffuf,execute_shcheck,execute_testssl,execute_diablork
+from modules import execute_nmap, execute_webanalyze, execute_ffuf, execute_shcheck, execute_testssl, execute_diablork
 from templates.generate_html import generate_html
-from utils import create_folder,is_valid_ip_or_domain,signal_handler,get_target_from_file
-from menu import show_menu,profile_banner
+from utils import create_folder, is_valid_ip_or_domain, signal_handler, get_target_from_file,clean_url
+from menu import show_menu, profile_banner
 from config import RESULTS_DIRECTORY
 
 # Global variable to handle program interruption (Ctrl+C)
@@ -14,19 +15,33 @@ interrupted = False
 # Configure the signal for Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
 
-def run_profile(profile, targets):
+def get_folder_name():
+    """
+    Asks the user for a custom folder name. If no name is provided,
+    the current date (without time) is used.
+    """
+    folder_name = input("Enter a name for the results folder: ")
+    if not folder_name:
+        folder_name = datetime.now().strftime("%Y-%m-%d")  # Use the current date if no name is provided
+    return folder_name
+
+def run_profile(profile, targets, execution_dir, folder_name):
     """
     Runs the user-selected scan profile sequentially.
     """
     for target in targets:
-        create_folder(target)
+        target = clean_url(target)
+
+        target_dir = os.path.join(execution_dir, target)  # Create target-specific directory
+
+        create_folder(target_dir)
         profile_banner(profile)
 
         if profile == "Recon":
             # First run Nmap
-            built_targets = execute_nmap(target)
+            built_targets = execute_nmap(target, target_dir)
             if not built_targets:
-                continue  # If Nmap found no open ports, or no targets could be constructed, we move on to the next target.
+                continue  # If Nmap found no open ports, skip to the next target
 
             modules = [
                 execute_webanalyze,
@@ -37,25 +52,18 @@ def run_profile(profile, targets):
             # Run modules sequentially
             for module in modules:
                 for constructed_target in built_targets:
-                    module(constructed_target)  # We execute each module for each target built
-            
-            generate_html(RESULTS_DIRECTORY,target)
-
-        elif profile == "Google Dorking":
-            execute_diablork(target)
-
-        else:
-            print("Profile not recognized. Omitting...")
-            continue
+                    module(constructed_target, target_dir)  # Execute each module for the target
+    
+    # Generate a single HTML report for all targets
+    generate_html(execution_dir, targets, folder_name)
 
 def main():
     """
-    Main function of the tool that manages the interaction with the user and the execution of the modules.
+    Main function that manages user interaction and module execution.
     """
-
     # Verify if the user provided a target file or URL/IP
     if len(sys.argv) < 2:
-        print("Please provide a file with targets or a URL/IP as argument.")
+        print("Please provide a file with targets or a URL/IP as an argument.")
         sys.exit(1)
 
     target_input = sys.argv[1]
@@ -66,25 +74,24 @@ def main():
     else:
         targets = [target_input]
 
-    # Validate if the targets are valid IPs or domains
-    valid_targets = []
-    for target in targets:
-        if is_valid_ip_or_domain(target):
-            valid_targets.append(target)
-        else:
-            print(f"Warning: '{target}' Not a valid IP or domain. It will be omitted.")
-
+    # Validate targets
+    valid_targets = [target for target in targets if is_valid_ip_or_domain(target)]
     if not valid_targets:
-        print("No valid targets were found. The program will stop.")
+        print("No valid targets found. Exiting.")
         sys.exit(1)
 
-    # Display menu only once and prompt for profile choice
+    # Display menu and prompt for profile choice
     profile = show_menu()
-
     if profile == "Exit":
         print("\nExiting the tool...")
+        sys.exit(0)
     elif profile:
-        run_profile(profile, valid_targets)
+        # Ask for the folder name after selecting the profile
+        folder_name = get_folder_name()
+        execution_dir = os.path.join(RESULTS_DIRECTORY, folder_name)
+        os.makedirs(execution_dir, exist_ok=True)
+
+        run_profile(profile, valid_targets, execution_dir, folder_name)
     else:
         print("Invalid option. Please try again.")
     
@@ -92,5 +99,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

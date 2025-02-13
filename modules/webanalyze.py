@@ -3,7 +3,7 @@ from core.utils import execute_command, check_effective_url,process_tool,target_
 from modules import execute_iis_shortname, execute_wpscan 
 from datetime import datetime
 
-def execute_webanalyze(target):
+def execute_webanalyze(target, target_dir):
     """
     Runs Webanalyze to detect the technologies used by the website.
     """
@@ -21,14 +21,14 @@ def execute_webanalyze(target):
         result = execute_command(command)
         tool = "webanalyze"
 
-        original_target = process_tool(target, result, tool, start_time)
+        original_target = process_tool(target, result, tool, start_time, target_dir)
 
         # Analyze the result to decide whether to run IIS Shortname Scan
         if "IIS" in result:
             print("Microsoft-IIS detected. Running IIS Shortname Scan...")
-            execute_iis_shortname(original_target)
+            execute_iis_shortname(original_target, target_dir)
         
         # Analyze the result to decide whether to run WPScan
         if "WordPress" in result:
             print("WordPress detected. Running WPScan...")
-            execute_wpscan(original_target)
+            execute_wpscan(original_target, target_dir)
