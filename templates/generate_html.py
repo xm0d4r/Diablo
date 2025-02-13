@@ -8,7 +8,7 @@ from templates.parser import (
 
 def generate_html(results_dir, targets, folder_name):
     # Clean the target URLs
-    print("HELEEEEEE")
+
     cleaned_targets = [clean_url(target) for target in targets]
     
     # Define the filenames for each tool's results

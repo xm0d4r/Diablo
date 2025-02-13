@@ -17,7 +17,7 @@ def execute_nmap(target, target_dir):
     """
     # Save the original target
     original_target = target
-    print("HELEEEEEE2")
+
     # Check if the target contains http or https and temporarily remove it
     target = clean_url(target)
     
