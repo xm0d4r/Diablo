@@ -11,8 +11,7 @@ def execute_testssl(target, target_dir):
     if target.startswith("http://"):
         return  # If it already has http://, do nothing
 
-    else: 
-        target.startswith("https://")
+    elif target.startswith("https://"): 
         # Set start time
         start_time = datetime.now()
 
@@ -22,4 +21,6 @@ def execute_testssl(target, target_dir):
         tool = "testssl"
         
         process_tool(target, result, tool, start_time, target_dir)
+    else:
+        return
     

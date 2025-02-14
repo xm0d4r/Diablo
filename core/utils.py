@@ -132,15 +132,19 @@ def get_target_from_file(target_file):
     with open(target_file, 'r') as file:
         return [line.strip() for line in file.readlines()]
 
+import re
+
 def verify_nmap_services(target, nmap_result):
     """
     Checks whether HTTP, HTTPS or SSL/HTTP services were found in the Nmap result.
-    
+    If no such services are found, returns all open ports as target:port.
+
     Args:
+        target (str): The name of the host or domain.
         nmap_result (str): Nmap result as a string.
-        
+
     Returns:
-        list: List of ports found along with the corresponding pattern.
+        set: Set of constructed targets.
     """
     # Regular expressions to search for http, https or ssl/http services
     patterns = [
@@ -148,51 +152,54 @@ def verify_nmap_services(target, nmap_result):
         (r"(\d+)/tcp\s+open\s+https", 'https'),     # https
         (r"(\d+)/tcp\s+open\s+ssl/http", 'ssl/http') # ssl/http
     ]
-    
-    # Use a set to avoid duplicate ports, but keeping the protocol
-    found_ports = {}
 
-    # Search for matches in the Nmap output
-    for patron, protocol in patterns:
-        matches = re.findall(patron, nmap_result)
+    found_ports = {}  # Dictionary to store ports with detected services
+    all_ports = set()  # Set to collect all open ports
+
+    # Search for HTTP/HTTPS services in Nmap output
+    for pattern, protocol in patterns:
+        matches = re.findall(pattern, nmap_result)
         for port in matches:
-            # Add the port with its protocol only if it is not already in the dictionary
-            found_ports[port] = protocol
-    
-    # Convert to list of tuples (protocol, port)
-    unique_ports = [(protocol, port) for port, protocol in found_ports.items()]
-    
-    # We pass the list of ports found to the construct_targets function
-    return built_targets(target, unique_ports)
+            found_ports[port] = protocol  # Store port with its protocol
 
+    # Find all open ports, regardless of protocol
+    all_open_ports = re.findall(r"(\d+)/tcp\s+open", nmap_result)
+    all_ports.update(all_open_ports)
+
+    # If HTTP/HTTPS services were found, use those, otherwise return all open ports
+    if found_ports:
+        unique_ports = [(protocol, port) for port, protocol in found_ports.items()]
+    else:
+        unique_ports = [(None, port) for port in all_ports]  # No protocol
+
+    return built_targets(target, unique_ports)
 
 def built_targets(target, ports):
     """
     Constructs the targets for the ports found according to the service (http, https, ssl/http).
-    
+    If no known service is found, returns target:port.
+
     Args:
         target (str): The name of the host or domain.
         ports (list): List of tuples with the protocol and port found.
-        
+
     Returns:
         set: Set of constructed targets.
     """
-    # Dictionary for mapping the services with their protocols
     protocols = {
         'http': 'http://',
         'https': 'https://',
         'ssl/http': 'https://',  # SSL/HTTP
     }
-    
-    # Set to store the different targets
+
     targets = set()
-    
-    # Build targets for each service found
+
     for protocol, port in ports:
         if protocol in protocols:
             targets.add(f"{protocols[protocol]}{target}:{port}")
+        else:
+            targets.add(f"{target}:{port}")  # If no protocol, return target:port
 
-    # Return the set of all constructed targets
     return targets
 
 def target_with_slash(target):
