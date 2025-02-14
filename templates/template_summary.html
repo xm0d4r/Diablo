@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Reconocimiento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #000;
+            color: #d9534f;  
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            background: #181818;  
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(217, 83, 72, 0.3);
+            position: relative;
+        }
+        h1, h2 {
+            color: #fff;
+            font-weight: bold;
+        }
+        h3 {
+            color: #d9534f;  
+        }
+        h4 {
+            color: #fff;  
+        }
+        h5 {
+            color: #fff;  
+        }
+        pre {
+            background: #222;
+            color: #d9534f;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            border: 1px solid #d9534f;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        hr {
+            border: 1px solid #d9534f;  
+        }
+        strong {
+            font-weight: bold;
+            color: #f8f9fa;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+        }
+        .target-container {
+            margin-bottom: 30px;
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .target-header {
+            color: #d9534f;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .target-content {
+            display: none; 
+            padding-top: 10px;
+        }
+    </style>
+    <script>
+        function toggleContent(targetId) {
+            var content = document.getElementById(targetId);
+            content.style.display = (content.style.display === "block") ? "none" : "block";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <img src="../../dependencies/templates/logo.png" alt="Logo" class="logo">
+        
+        <h1 class="text-center">Recon Report</h1>
+        <hr>
+
+        <!-- Loop through each target and its report -->
+        {% for target, report in target_reports.items() %}
+            <div class="target-container">
+                <!-- Target header with toggle functionality -->
+                <h3 class="target-header" onclick="toggleContent('{{ target }}')">
+                    <i>{{ target }}</i>
+                </h3>
+                <div class="target-content" id="{{ target }}">
+                    <hr>
+
+                    <!-- Display open ports if available -->
+                    {% if report.open_ports %}
+                        <h5>Nmap - Open Ports</h5>
+                        <pre>{{ report.open_ports | join("\n") }}</pre>
+                    {% endif %}
+
+                    <!-- Display detected services if available -->
+                    {% if report.services %}
+                        <h5>Webanalyze - Detected Services</h5>
+                        <pre>{{ report.services }}</pre>
+                    {% endif %}
+
+                    <!-- Display TestSSL information if available -->
+                    {% if report.testssl_info %}
+                        <h5>TestSSL - Information</h5>
+                        <pre>{{ report.testssl_info }}</pre>
+                    {% endif %}
+
+                    <!-- Display missing headers if available -->
+                    {% if report.missing_headers %}
+                        <h5>ShCheck - Missing Headers</h5>
+                        <pre>{{ report.missing_headers | join("\n") }}</pre>
+                    {% endif %}
+
+                    <!-- Display FFUF results if available -->
+                    {% if report.ffuf_results %}
+                        <h5>FFUF - Found Results</h5>
+                        <pre>{{ report.ffuf_results }}</pre>
+                    {% endif %}
+
+                    <!-- Display Enum4Linux results if available -->
+                    {% if report.enum4linux_results %}
+                        <h5>Enum4Linux - Results</h5>
+                        <pre>{{ report.enum4linux_results | join("\n") }}</pre>
+                    {% endif %}
+
+                    <!-- Display IIS Shortname results if available -->
+                    {% if report.iis_shortname_results %}
+                        <h5>IIS Shortname - Results</h5>
+                        <pre>{{ report.iis_shortname_results }}</pre>
+                    {% endif %}
+
+                    <!-- Display NetExec results if available -->
+                    {% if report.netexec_results %}
+                        <h5>NetExec - Results</h5>
+                        <pre>{{ report.netexec_results }}</pre>
+                    {% endif %}
+
+                    <!-- Display WPScan results if available -->
+                    {% if report.wpscan_results %}
+                        <h5>WPScan - Results</h5>
+                        <pre>{{ report.wpscan_results | join("\n") }}</pre>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
