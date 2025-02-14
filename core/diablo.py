@@ -30,15 +30,14 @@ def run_profile(profile, targets, execution_dir, folder_name):
     Runs the user-selected scan profile sequentially.
     """
     for target in targets:
-        target = clean_url(target)
-
-        target_dir = os.path.join(execution_dir, target)  # Create target-specific directory
-        #print("target_dir: ", target_dir)
-
-        create_folder(target_dir)
         profile_banner(profile)
 
         if profile == "Recon":
+            target = clean_url(target)
+
+            target_dir = os.path.join(execution_dir, target)  # Create target-specific directory
+
+            create_folder(target_dir)
             # First run Nmap
             built_targets = execute_nmap(target, target_dir)
             if not built_targets:
@@ -54,9 +53,12 @@ def run_profile(profile, targets, execution_dir, folder_name):
             for module in modules:
                 for constructed_target in built_targets:
                     module(constructed_target, target_dir)  # Execute each module for the target
-    
-    # Generate a single HTML report for all targets
-    generate_html(execution_dir, targets, folder_name)
+
+            # Generate a single HTML report for all targets
+            generate_html(execution_dir, targets, folder_name)
+        elif profile == "Google Dorking":
+            create_folder(target)
+            execute_diablork(target)
 
 def main():
     """
@@ -87,13 +89,15 @@ def main():
     if profile == "Exit":
         print("\nExiting the tool...")
         sys.exit(0)
-    elif profile:
+    elif profile == "Recon":
         # Ask for the folder name after selecting the profile
         folder_name = get_folder_name()
         execution_dir = os.path.join(RESULTS_DIRECTORY, folder_name)
         os.makedirs(execution_dir, exist_ok=True)
 
         run_profile(profile, valid_targets, execution_dir, folder_name)
+    elif profile == "Google Dorking":
+        run_profile(profile, valid_targets, None,None)
     else:
         print("Invalid option. Please try again.")
     
