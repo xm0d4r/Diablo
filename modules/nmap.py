@@ -30,14 +30,14 @@ def execute_nmap(target, target_dir):
 
     # Check if Nmap found open ports
     if not is_ports_open(result):
-        print(f"No open ports found in {target}. Stopping module execution.")
+        print(f"\nNo open ports found in {target}. Stopping module execution.")
         return []  # Return an empty list if no open ports are found
 
     # Call verify_nmap_services to get the ports and build the targets
     targets = verify_nmap_services(target, result)
 
     if not targets:
-        print(f"No HTTP/HTTPS/SSL services were found for the target {target}.")
+        print(f"\nNo HTTP/HTTPS/SSL services were found for the target {target}.")
         return []  # Return an empty list if no HTTP/HTTPS ports are found
 
     results_folderpath = f"{target_dir}/"

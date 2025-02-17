@@ -63,4 +63,4 @@ def generate_html(results_dir, targets, folder_name):
         f.write(summary_html_content)
     
     # Print the path to the generated HTML report
-    print(f"Informe HTML resumen generado: {summary_html_file_path}")
+    print(f"\nReport summary generated in: {summary_html_file_path}")

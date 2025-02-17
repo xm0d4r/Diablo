@@ -24,7 +24,7 @@ def parse_nmap(results_file):
 
             if not line.strip():
                 break
-    return open_ports
+    return "\n".join(open_ports) if open_ports else "No open ports detected."
 
 def parse_webanalyze(results_file):
     lines = read_file(results_file)

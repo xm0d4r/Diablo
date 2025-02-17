@@ -29,10 +29,12 @@ def run_profile(profile, targets, execution_dir, folder_name):
     """
     Runs the user-selected scan profile sequentially.
     """
+    recon_profile = False
     for target in targets:
         profile_banner(profile)
 
         if profile == "Recon":
+            recon_profile = True
             target = clean_url(target)
 
             target_dir = os.path.join(execution_dir, target)  # Create target-specific directory
@@ -54,11 +56,12 @@ def run_profile(profile, targets, execution_dir, folder_name):
                 for constructed_target in built_targets:
                     module(constructed_target, target_dir)  # Execute each module for the target
 
-            # Generate a single HTML report for all targets
-            generate_html(execution_dir, targets, folder_name)
         elif profile == "Google Dorking":
             create_folder(target)
             execute_diablork(target)
+    if recon_profile:
+        # Generate a single HTML report for all targets
+        generate_html(execution_dir, targets, folder_name)
 
 def main():
     """
