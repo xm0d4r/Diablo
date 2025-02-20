@@ -10,7 +10,8 @@ COMMAND = {
         "-w", "../dependencies/ffuf/test.txt",   # Path to the wordlist dictionary file
         "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",  # User-Agent header
         "-c",                      # Show results in color
-        "-ac"                      # Enable deduplication avoidance mode
+        "-ac",                      # Enable deduplication avoidance mode
+        "-fc", "403"                # Filter out results with different status codes
     ],
     "shortscan": [
         "shortscan",               # Main command

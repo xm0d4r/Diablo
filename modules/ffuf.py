@@ -42,7 +42,7 @@ def run_ffuf(target, original_target, start_time, target_dir):
                 output = ""
                 relevant_lines = []
                 for line in process.stdout:
-                    print(line, end="")
+                    #print(line, end="")
                     output += line
 
                     # Check for server saturation based on duration and request per second
@@ -76,6 +76,3 @@ def save_results(original_target, relevant_lines, start_time, target_dir):
     os.makedirs(results_folderpath, exist_ok=True)
     output_file_path = os.path.join(results_folderpath, f"ffuf{RESULTS_FILEEXTENSION}")
     save_output_to_file("".join(relevant_lines), output_file_path, target, start_time)  # Save the output to a file
-
-
-
