@@ -6,6 +6,15 @@ INSTALL_DIR="/usr/local/bin"
 # Ensure the directory exists
 sudo mkdir -p "$INSTALL_DIR"
 
+# Ensure git is installed
+if ! command -v git &> /dev/null; then
+    echo "Git is not installed. Installing Git..."
+    sudo apt update
+    sudo apt install -y git
+else
+    echo "Git is already installed ✅"
+fi
+
 # Install Go if not installed
 if ! command -v go &> /dev/null; then
     echo "Go is not installed. Installing Go..."
@@ -17,6 +26,9 @@ fi
 
 # Ensure Go bin path is in PATH
 export PATH=$PATH:$HOME/go/bin
+echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
+echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.zshrc
+source ~/.bashrc 2>/dev/null || source ~/.zshrc 2>/dev/null
 
 # Install tools with APT if available
 apt_tools=("enum4linux" "ffuf" "nmap" "wpscan")
@@ -74,4 +86,4 @@ else
     sudo ln -s "$INSTALL_DIR/testssl.sh/testssl.sh" /usr/local/bin/testssl
 fi
 
-echo "Installation completed. Remember to restart the terminal if necessary."
+echo "Installation completed. Restart the terminal to apply changes."
