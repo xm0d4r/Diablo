@@ -30,6 +30,10 @@ def clean_url(target):
    
     return target
 
+def isLazyhunter(command):
+    """Check if the command is LazyHunter."""
+    return "lazyhunter" in command.lower()
+
 def execute_command(command):
     """
     Executes a command on the operating system and returns the output.
@@ -39,12 +43,23 @@ def execute_command(command):
         print(f"                                           Tool: {command.split()[0]}                                                   ")
         print(f"{bold}{blue}----------------------------------------------------------------------------------------------------{reset}")
         print(f"\n{bold}Executing: {command}{reset}")
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if isLazyhunter(command):
+            # Set timeout to 5 minutes (300 seconds)
+            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=300)
+        else:
+            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         output = result.stdout.decode('utf-8')
         if not output:
             print("Warning: Command output is empty.")
             return "No output from the command was obtained."
         return output
+    
+    except subprocess.TimeoutExpired:
+        print("LazyHunter execution timed out (2 minutes). Skipping to the next task.")
+        return "LazyHunter execution timed out."
+    
     except subprocess.CalledProcessError as e:
         error_msg = f"Error executing command: {command}\n"
         error_msg += f"Standard output (stdout):\n{e.stdout.decode('utf-8') if e.stdout else 'N/A'}\n"
@@ -119,11 +134,37 @@ def is_valid_ip_or_domain(target):
 
 # Ctrl+C operation
 def signal_handler(sig, frame):
-    global interrupted
-    print("\nExiting the tool...")
-    print("\n🔥😈 Diablo is done. Savor the spoils. 😈🔥\n")
-    interrupted = True
-    sys.exit(0)
+    global interrupted, action_taken
+    print("\nCtrl+C detected!")
+    print("What do you want to do?")
+    print(" - Type 'q' to quit the tool.")
+    print(" - Type 'sm' to skip the current module.")
+    print(" - Type 'st' to skip the current target.")
+
+    # Get user input
+    choice = input("Your choice (q/sm/st): ").strip().lower()
+
+    if choice == 'q':  # Quit the tool
+        print("\nExiting the tool...")
+        print("\n🔥😈 Diablo is done. Savor the spoils. 😈🔥\n")
+        interrupted = True
+        sys.exit(0)
+    
+    elif choice == 'sm':  # Skip the current module
+        print("\nSkipping the current module...")
+        interrupted = True  # Set interrupted to True if skipping the module
+        action_taken = 'sm'  # Mark that skipping module is the action taken
+        return  # Continue execution without exiting
+    
+    elif choice == 'st':  # Skip the current target
+        print("\nSkipping the current target...")
+        interrupted = True  # Set interrupted to True if skipping the target
+        action_taken = 'st'  # Mark that skipping target is the action taken
+        return  # Continue execution without exiting
+    
+    else:
+        print("\nInvalid choice. Please choose 'q', 'sm', or 'st'.")
+        return  # Stay in the current state and ask again
 
 def get_target_from_file(target_file):
     """
@@ -131,8 +172,6 @@ def get_target_from_file(target_file):
     """
     with open(target_file, 'r') as file:
         return [line.strip() for line in file.readlines()]
-
-import re
 
 def verify_nmap_services(target, nmap_result):
     """
@@ -254,3 +293,17 @@ def process_tool(target, result, tool, start_time, target_dir):
     save_output_to_file(result, f"{results_folderpath}{tool}{RESULTS_FILEEXTENSION}", original_target, start_time)
     # Restore the original target after scan
     return original_target
+
+def obtainIP(target, result):
+    """
+    Extracts the IP of a domain/subdomain from the result of a Nmap scan.
+    
+    param target: Domain or subdomain scanned.
+    :param result: Nmap output as a string.
+    :return: IP of the asset if found, None otherwise.
+    """
+    if re.match(r"^\d+\.\d+\.\d+\.\d+$", target):
+        return target  # If the target is already an IP, return it directly
+    
+    match = re.search(rf"Nmap scan report for {re.escape(target)} \((\d+\.\d+\.\d+\.\d+)\)", result)
+    return match.group(1) if match else None

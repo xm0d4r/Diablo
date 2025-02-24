@@ -26,9 +26,20 @@ def get_folder_name():
         folder_name = datetime.now().strftime("%Y-%m-%d")  # Use the current date if no name is provided
     return folder_name
 
+# Run the profile
 def run_profile(profile, targets, execution_dir, folder_name):
     recon_profile = False
+    global interrupted, action_taken  # Access the global variables for interruption state and action
+
     for target in targets:
+        if interrupted:
+            if action_taken == 'st':  # Skip the current target
+                print(f"Skipping target: {target}")
+                continue  # Skip the current target and move to the next one
+            elif action_taken == 'sm':  # Skip the current module
+                print("Skipping the current module...")
+                break  # Skip the current module and move to the next one (the loop will continue with the next module)
+
         profile_banner(profile)
 
         if profile == "Recon":
@@ -48,7 +59,10 @@ def run_profile(profile, targets, execution_dir, folder_name):
                 execute_testssl,
                 execute_ffuf
             ]
+
             for module in modules:
+                if interrupted and action_taken == 'sm':  # Check if we need to skip the current module
+                    break  # Skip the current module and move to the next one
                 for constructed_target in built_targets:
                     module(constructed_target, target_dir)
 

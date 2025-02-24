@@ -54,8 +54,8 @@ def run_ffuf(target, original_target, start_time, target_dir):
                             total_seconds = sum(int(x) * 60 ** i for i, x in enumerate(reversed(duration_match.group(1).split(":"))))
                             req_sec = int(req_sec_match.group(1))
 
-                            if total_seconds >= 2 and 0 <= req_sec <= 20:
-                                print("\nServer saturation. Stopping FFUF and continuing with the next module.")
+                            if total_seconds >= 3 and 0 <= req_sec <= 20:
+                                print("\nServer saturation. Stopping FFUF.")
                                 save_results(original_target, relevant_lines, start_time, target_dir)  # Save the results
                                 process.terminate()  # Terminate the process
                                 return

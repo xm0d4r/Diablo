@@ -67,5 +67,10 @@ COMMAND = {
         "--connect-timeout", "10", # Connection timeout
         "--disable-tls-checks",    # Disable TLS checks
         "{target}"                 # Target
+    ],
+    "lazyhunter": [
+        "lazyhunter",              # Main command
+        "--ip", "{target}",        # Single IP to scan
+        "--cve+ports"              # Show CVEs with severity level and open ports
     ]
 }
