@@ -43,7 +43,7 @@ COMMAND = {
     "testssl": [
         "testssl",                 # Main command
         "--protocols",             # Show supported protocols
-        "--server-defaults",       # Use server’s default settings
+        #"--server-defaults",       # Use server’s default settings
         "-s",                      # Check all available options
         "--connect-timeout", "5",  # Set connection timeout
         "--openssl-timeout", "5",  # Set OpenSSL timeout

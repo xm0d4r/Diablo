@@ -5,9 +5,11 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from modules import execute_nmap, execute_webanalyze, execute_ffuf, execute_shcheck, execute_testssl, execute_diablork
 from templates.generate_html import generate_html
-from utils import create_folder, is_valid_ip_or_domain, signal_handler, get_target_from_file, clean_url
-from menu import show_menu, profile_banner
-from config import RESULTS_DIRECTORY
+from core.utils.command_execution import signal_handler
+from core.utils.file_operations import create_folder,get_target_from_file
+from core.utils.network_operations import is_valid_ip_or_domain,clean_url
+from core.menu.menu import show_menu, profile_banner,target_banner,show_options
+from configuration.global_config import RESULTS_DIRECTORY
 
 # Configure the signal for Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
@@ -18,7 +20,7 @@ def print_help():
     sys.exit(0)
 
 def get_folder_name():
-    folder_name = input("Enter a name for the results folder: ")
+    folder_name = input("Enter the result folder name: ")
     if not folder_name:
         folder_name = datetime.now().strftime("%Y-%m-%d")  # Use the current date if no name is provided
     return folder_name
@@ -26,9 +28,9 @@ def get_folder_name():
 # Run the profile
 def run_profile(profile, targets, execution_dir, folder_name):
     recon_profile = False
-
+    profile_banner(profile)
     for target in targets:
-        profile_banner(profile)
+        target_banner(target)
 
         if profile == "Recon":
             recon_profile = True
@@ -80,19 +82,23 @@ def main():
         print("No valid targets found. Exiting.")
         sys.exit(1)
 
-    profile = show_menu()
-    if profile == "Exit":
-        print("\nExiting the tool...")
-        sys.exit(0)
-    elif profile == "Recon":
-        folder_name = get_folder_name()
-        execution_dir = os.path.join(RESULTS_DIRECTORY, folder_name)
-        os.makedirs(execution_dir, exist_ok=True)
-        run_profile(profile, valid_targets, execution_dir, folder_name)
-    elif profile == "Google Dorking":
-        run_profile(profile, valid_targets, None, None)
-    else:
-        print("Invalid option. Please try again.")
+    show_menu()
+    while True:
+        profile = show_options()
+        if profile == "Exit":
+            print("\nExiting the tool...")
+            sys.exit(0)
+        elif profile == "Recon":
+            folder_name = get_folder_name()
+            execution_dir = os.path.join(RESULTS_DIRECTORY, folder_name)
+            os.makedirs(execution_dir, exist_ok=True)
+            run_profile(profile, valid_targets, execution_dir, folder_name)
+            break  # Break out of the loop once the profile has been executed
+        elif profile == "Google Dorking":
+            run_profile(profile, valid_targets, None, None)
+            break  # Break out of the loop once the profile has been executed
+        else:
+            print("Invalid option. Please try again.")
     
     print("\n🔥😈 Diablo is done. Savor the spoils. 😈🔥\n")
 

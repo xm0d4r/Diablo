@@ -1,0 +1,13 @@
+
+================================================================================
+Execution date: 2025-03-05 17:33:02
+================================================================================
+Initiating scan for target: http://testaspnet.vulnweb.com:80
+Elapsed scan time: 0:00:01
+================================================================================
+
+
+http://testaspnet.vulnweb.com:80 (0.8s):
+    IIS, 8.5 (Web servers)
+    Windows Server,  (Operating systems)
+    Microsoft ASP.NET,  (Web frameworks)

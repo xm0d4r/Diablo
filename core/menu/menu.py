@@ -3,6 +3,7 @@ import time
 import random
 import sys
 import time
+from configuration.global_config import colors
 
 
 diablo = [r'''                , ,, ,                              
@@ -83,23 +84,32 @@ banner = (r"""
         ░     ░        ░  ░ ░          ░  ░    ░ ░  
         ░                          ░                """)
 
-class colors:
-    CRED2 = "\033[91m"
-    CBLUE2 = "\033[94m"
-    ENDC = "\033[0m"
-    BOLD = "\033[1m"
-    RED = "\033[91m"
-
-def ffuf_banner(command):
-    print(f"\n{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------")
-    print(f"                                            Tool: ffuf                                                     ")
-    print(f"{colors.BOLD}{colors.CBLUE2}----------------------------------------------------------------------------------------------------{colors.ENDC}")
-    print(f"\n{colors.BOLD}Executing: {" ".join(command)}{colors.ENDC}")
-
 def profile_banner(profile):
-    print(f"\n{colors.RED}{colors.BOLD}----------------------------------------------------------------------------------------------------{colors.RED} ")
-    print(f"{colors.RED}                                        Profile: {profile}                                                       {colors.RED}")
-    print(f"{colors.RED}----------------------------------------------------------------------------------------------------{colors.RED}{colors.ENDC} ")
+    print(f"\n{colors.GREEN}[🔎] Profile Loaded: {profile}{colors.ENDC}")
+    print(f"{colors.BOLD}{colors.GREEN}───────────────────────────────────────────────{colors.ENDC}")
+
+def target_banner(target):
+    print(f"\n{colors.YELLOW}[🎯] Target: {target}{colors.ENDC}")
+    print(f"{colors.BOLD}{colors.YELLOW}───────────────────────────────────────────────{colors.ENDC}")
+
+def ffuf_banner(dynamic=False, status_char=' ', final=False, protocol_suffix=""):
+    banner = f"\r{colors.CYAN}[>] {colors.BOLD}{colors.UNDERLINE}{'ffuf'}{colors.ENDC}{protocol_suffix} {status_char} "
+    sys.stdout.write(banner)
+    sys.stdout.flush()
+    if final:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+        if status_char == '🛑':
+            print(f"    └─{colors.CRED2} Server saturation, ffuf stopped. {colors.ENDC}")
+
+def tool_banner(command, dynamic=False, status_char=' ', final=False, protocol_suffix=""):
+    tool_name = command.split()[0]
+    banner = f"\r{colors.CYAN}[>] {colors.BOLD}{colors.UNDERLINE}{tool_name}{colors.ENDC}{protocol_suffix} {status_char} "
+    sys.stdout.write(banner)
+    sys.stdout.flush()
+    if final:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
 
 def show_menu():
 
@@ -134,14 +144,15 @@ def show_menu():
     for col in random.choice(diablo):
         print(colors.CRED2 + col, end="")
         sys.stdout.flush()
-    time.sleep(1)
-    
+    time.sleep(1)   
     print("\n" + colors.ENDC + col)
+
     print("Select the type of recognition you wish to perform:\n")
     print(" 1. Recon")
     print(" 2. Google Dorking")
     print(" 3. Exit")
 
+def show_options():
     # Request the user to select a profile
     choice = input("\nDesired option: ")
 
@@ -153,4 +164,6 @@ def show_menu():
 
     # Validate the option and return the selected profile.
     return profiles.get(choice, None)
+
+
 

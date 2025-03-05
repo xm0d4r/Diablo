@@ -1,6 +1,7 @@
 import os
 from jinja2 import Environment, FileSystemLoader
-from core.utils import clean_url
+from core.utils.network_operations import clean_url
+from configuration.global_config import colors
 from templates.parser import (
     parse_nmap, parse_webanalyze, parse_testssl, parse_shcheck, 
     parse_netexec, parse_enum4linux, parse_shortscan
@@ -56,4 +57,4 @@ def generate_html(results_dir, targets, folder_name):
         f.write(summary_html_content)
     
     # Print the path to the generated HTML report
-    print(f"\nReport summary generated in: {summary_html_file_path}")
+    print(f"\n{colors.GREEN}{colors.BOLD}Report summary generated in:{colors.ENDC} {colors.UNDERLINE}{summary_html_file_path.replace('../', '')}{colors.ENDC}")

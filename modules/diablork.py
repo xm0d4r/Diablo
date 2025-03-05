@@ -1,6 +1,6 @@
 import subprocess
-from core.config import RESULTS_DIRECTORY
-from core.utils import clean_url
+from configuration.global_config import RESULTS_DIRECTORY
+from core.utils.file_operations import clean_url
 
 
 def execute_diablork(domain):

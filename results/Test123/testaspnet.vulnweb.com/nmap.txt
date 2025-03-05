@@ -1,0 +1,31 @@
+
+================================================================================
+Execution date: 2025-03-05 17:13:40
+================================================================================
+Initiating scan for target: testaspnet.vulnweb.com
+Elapsed scan time: 0:00:02
+================================================================================
+
+
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-03-05 17:13 CET
+Initiating Parallel DNS resolution of 1 host. at 17:13
+Completed Parallel DNS resolution of 1 host. at 17:13, 0.03s elapsed
+Initiating SYN Stealth Scan at 17:13
+Scanning testaspnet.vulnweb.com (44.238.29.244) [5 ports]
+Discovered open port 80/tcp on 44.238.29.244
+Completed SYN Stealth Scan at 17:13, 2.14s elapsed (5 total ports)
+Nmap scan report for testaspnet.vulnweb.com (44.238.29.244)
+Host is up, received user-set (0.21s latency).
+rDNS record for 44.238.29.244: ec2-44-238-29-244.us-west-2.compute.amazonaws.com
+Scanned at 2025-03-05 17:13:38 CET for 2s
+
+PORT     STATE    SERVICE      REASON
+80/tcp   open     http         syn-ack ttl 64
+443/tcp  filtered https        no-response
+445/tcp  filtered microsoft-ds no-response
+8080/tcp filtered http-proxy   no-response
+8443/tcp filtered https-alt    no-response
+
+Read data files from: /usr/share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 2.47 seconds
+           Raw packets sent: 9 (396B) | Rcvd: 1 (44B)

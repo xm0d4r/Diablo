@@ -1,5 +1,8 @@
 from configuration.commands import COMMAND
-from core.utils import execute_command, check_effective_url,process_tool,target_with_slash
+from core.utils.command_execution import execute_command
+from core.utils.file_operations import process_result_to_file
+from core.utils.parsing_operations import target_with_slash
+from core.utils.network_operations import check_effective_url
 from modules import execute_iis_shortname, execute_wpscan 
 from datetime import datetime
 
@@ -21,14 +24,14 @@ def execute_webanalyze(target, target_dir):
         result = execute_command(command)
         tool = "webanalyze"
 
-        original_target = process_tool(target, result, tool, start_time, target_dir)
+        original_target = process_result_to_file(target, result, tool, start_time, target_dir)
 
         # Analyze the result to decide whether to run IIS Shortname Scan
         if "IIS" in result:
-            print("\n[INFO] Microsoft-IIS detected. Running IIS Shortname Scan...")
+            print("     └─ Microsoft-IIS detected. Running IIS Shortname Scan...")
             execute_iis_shortname(original_target, target_dir)
         
         # Analyze the result to decide whether to run WPScan
         if "WordPress" in result:
-            print("\n[INFO] WordPress detected. Running WPScan...")
+            print("     └─ WordPress detected. Running WPScan...")
             execute_wpscan(original_target, target_dir)

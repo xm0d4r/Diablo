@@ -1,0 +1,32 @@
+
+================================================================================
+Execution date: 2025-03-05 17:32:34
+================================================================================
+Initiating scan for target: evil.com
+Elapsed scan time: 0:00:01
+================================================================================
+
+
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-03-05 17:32 CET
+Initiating Parallel DNS resolution of 1 host. at 17:32
+Completed Parallel DNS resolution of 1 host. at 17:32, 0.01s elapsed
+Initiating SYN Stealth Scan at 17:32
+Scanning evil.com (66.96.146.129) [5 ports]
+Discovered open port 80/tcp on 66.96.146.129
+Discovered open port 443/tcp on 66.96.146.129
+Completed SYN Stealth Scan at 17:32, 0.92s elapsed (5 total ports)
+Nmap scan report for evil.com (66.96.146.129)
+Host is up, received user-set (0.11s latency).
+rDNS record for 66.96.146.129: 129.146.96.66.static.eigbox.net
+Scanned at 2025-03-05 17:32:33 CET for 1s
+
+PORT     STATE    SERVICE      REASON
+80/tcp   open     http         syn-ack ttl 64
+443/tcp  open     https        syn-ack ttl 64
+445/tcp  filtered microsoft-ds no-response
+8080/tcp filtered http-proxy   no-response
+8443/tcp filtered https-alt    no-response
+
+Read data files from: /usr/share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 1.14 seconds
+           Raw packets sent: 8 (352B) | Rcvd: 2 (88B)

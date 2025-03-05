@@ -1,5 +1,9 @@
 from configuration.commands import COMMAND
-from core.utils import execute_command, check_effective_url,process_tool,target_with_slash
+from core.utils.command_execution import execute_command
+from core.utils.file_operations import process_result_to_file
+from core.utils.parsing_operations import target_with_slash
+from core.utils.network_operations import check_effective_url
+
 from datetime import datetime
 
 def execute_shcheck(original_target, target_dir):
@@ -22,4 +26,4 @@ def execute_shcheck(original_target, target_dir):
         command = " ".join(part.format(target=target) if "{target}" in part else part for part in COMMAND["shcheck"])
         result = execute_command(command)
         tool = "shcheck"
-        process_tool(original_target, result, tool, start_time, target_dir)
+        process_result_to_file(original_target, result, tool, start_time, target_dir)

@@ -4,14 +4,10 @@ import re
 import sys
 import requests
 import warnings
+import time
 from datetime import datetime
-from urllib.parse import urlparse
-from config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
-
-# Define ANSI escape codes for bold and colors
-bold = "\033[1m"
-blue = "\033[94m"
-reset = "\033[0m"
+from configuration.global_config import RESULTS_DIRECTORY, RESULTS_FILEEXTENSION
+from core.menu.menu import tool_banner
 
 def clean_url(target):
     """ 
@@ -30,28 +26,63 @@ def clean_url(target):
    
     return target
 
+def extract_protocol_target(command):
+    """
+    Extracts the protocol (HTTP or HTTPS) and target from the command.
+    """
+    tool_names = ["webanalyze", "shcheck", "ffuf"]
+    for tool in tool_names:
+        if tool in command:
+            match = re.search(r'(https?://[^ ]+)', command)
+            if match:
+                url = match.group(1)
+                protocol = url.split("://")[0]
+                return protocol, url
+    return None
+
 def execute_command(command):
     """
-    Executes a command on the operating system and returns the output.
+    Executes a command and updates status dynamically on the same line.
     """
     try:
-        print(f"\n{bold}{blue}----------------------------------------------------------------------------------------------------")
-        print(f"                                           Tool: {command.split()[0]}                                                   ")
-        print(f"{bold}{blue}----------------------------------------------------------------------------------------------------{reset}")
-        print(f"\n{bold}Executing: {command}{reset}")
+        # Extract protocol and target
+        protocol_target = extract_protocol_target(command)
+        protocol_suffix = f" ({protocol_target[0].upper()})" if protocol_target else ""
 
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Initial banner with a moving indicator
+        tool_banner(command, dynamic=True, status_char='|', protocol_suffix=protocol_suffix)
 
-        output = result.stdout.decode('utf-8')
-        if not output:
-            print("Warning: Command output is empty.")
-            return "No output from the command was obtained."
-        return output
-      
-    except subprocess.CalledProcessError as e:
-        error_msg = f"Error executing command: {command}\n"
-        error_msg += f"Standard output (stdout):\n{e.stdout.decode('utf-8') if e.stdout else 'N/A'}\n"
-        return error_msg
+        # Execute the command
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        # Dynamic indicator loop
+        indicator_chars = ['|', '/', '-', '\\']
+        indicator_index = 0
+        while process.poll() is None:
+            tool_banner(command, dynamic=True, status_char=indicator_chars[indicator_index], protocol_suffix=protocol_suffix)
+            indicator_index = (indicator_index + 1) % len(indicator_chars)
+            time.sleep(0.1)  # Adjust speed of the indicator
+
+        # Get the output after the process finishes
+        stdout, stderr = process.communicate()
+        output = stdout.strip()
+
+        if process.returncode == 0:
+            tool_banner(command, dynamic=True, status_char='✅', final=True, protocol_suffix=protocol_suffix)
+            if not output:
+                return "No output from the command was obtained."
+            return output
+        else:
+            error_msg = f"Error executing command: {command}\n"
+            error_msg += f"Standard output (stdout):\n{stdout.strip() if stdout else 'N/A'}\n"
+            error_msg += f"Error output (stderr):\n{stderr.strip() if stderr else 'N/A'}\n"
+            tool_banner(command, dynamic=True, status_char='❌', final=True, protocol_suffix=protocol_suffix)
+            return error_msg
+
+    except Exception as e:
+        tool_banner(command, dynamic=True, status_char='❌', final=True, protocol_suffix="")
+        return f"An unexpected error occurred: {e}"
+
 
 def save_output_to_file(output, filename, target, start_time):
     """
@@ -236,7 +267,7 @@ def check_effective_url(target):
     except requests.exceptions.RequestException as e:
         return None
     
-def process_tool(target, result, tool, start_time, target_dir):
+def process_result_to_file(target, result, tool, start_time, target_dir):
     """
     Processes modules by cleaning the target URL, 
     saving the result to a file, and restoring the original target.

@@ -1,11 +1,12 @@
-from configuration.commands import COMMAND
-from core.utils import execute_command, save_output_to_file, clean_url
-from core.config import RESULTS_FILEEXTENSION
-from core.utils import verify_nmap_services
-from modules import execute_netexec, execute_enum4linux
-from datetime import datetime
 import re
 import os
+from configuration.commands import COMMAND
+from core.utils.command_execution import execute_command
+from core.utils.file_operations import save_output_to_file, clean_url
+from core.utils.parsing_operations import verify_nmap_services
+from configuration.global_config import RESULTS_FILEEXTENSION
+from modules import execute_netexec, execute_enum4linux
+from datetime import datetime
 
 def execute_nmap(target, target_dir):
     """
@@ -30,14 +31,14 @@ def execute_nmap(target, target_dir):
 
     # Check if Nmap found open ports
     if not is_ports_open(result):
-        print(f"\nNo open ports found in {target}. Stopping module execution.")
+        print(f"    └─ No open ports found in {target}. Stopping module execution.")
         return []  # Return an empty list if no open ports are found
 
     # Call verify_nmap_services to get the ports and build the targets
     targets = verify_nmap_services(target, result)
 
     if not targets:
-        print(f"\nNo HTTP/HTTPS/SSL services were found for the target {target}.")
+        print(f"    └─ No HTTP/HTTPS/SSL services were found for the target {target}.")
         return []  # Return an empty list if no HTTP/HTTPS ports are found
 
     results_folderpath = f"{target_dir}/"
@@ -51,7 +52,7 @@ def execute_nmap(target, target_dir):
     target = original_target
 
     if "Discovered open port 445/tcp" in result:
-        print("\n[INFO] Port 445 detected. Running NetExec and Enum4Linux...")
+        print("    └─ Port 445 detected. Running NetExec and Enum4Linux...")
         execute_netexec(target, target_dir) 
         execute_enum4linux(target, target_dir) 
 
