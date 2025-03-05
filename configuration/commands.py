@@ -65,8 +65,7 @@ COMMAND = {
         "--detection-mode", "passive",      # Passive detection mode
         "--request-timeout", "10", # Request timeout
         "--connect-timeout", "10", # Connection timeout
-        "--disable-tls-checks",    # Disable TLS checks
-        "{target}"                 # Target
+        "--disable-tls-checks"    # Disable TLS checks
     ],
     "lazyhunter": [
         "lazyhunter",              # Main command
