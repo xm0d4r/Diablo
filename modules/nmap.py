@@ -38,7 +38,7 @@ def execute_nmap(target, target_dir):
     targets = verify_nmap_services(target, result)
 
     if not targets:
-        print(f"    └─ No HTTP/HTTPS/SSL services were found for the target {target}.")
+        print(f"   └─ No HTTP/HTTPS/SSL services were found for the target {target}.")
         return []  # Return an empty list if no HTTP/HTTPS ports are found
 
     results_folderpath = f"{target_dir}/"

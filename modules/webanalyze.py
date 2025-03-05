@@ -28,10 +28,10 @@ def execute_webanalyze(target, target_dir):
 
         # Analyze the result to decide whether to run IIS Shortname Scan
         if "IIS" in result:
-            print("     └─ Microsoft-IIS detected. Running IIS Shortname Scan...")
+            print("    └─ Microsoft-IIS detected. Running IIS Shortname Scan...")
             execute_iis_shortname(original_target, target_dir)
         
         # Analyze the result to decide whether to run WPScan
         if "WordPress" in result:
-            print("     └─ WordPress detected. Running WPScan...")
+            print("    └─ WordPress detected. Running WPScan...")
             execute_wpscan(original_target, target_dir)
