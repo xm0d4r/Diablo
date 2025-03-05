@@ -1,8 +1,8 @@
 from configuration.commands import COMMAND
 from core.utils import execute_command, save_output_to_file, clean_url
 from core.config import RESULTS_FILEEXTENSION
-from core.utils import verify_nmap_services, obtainIP
-from modules import execute_netexec, execute_enum4linux, execute_lazyhunter
+from core.utils import verify_nmap_services
+from modules import execute_netexec, execute_enum4linux
 from datetime import datetime
 import re
 import os
@@ -49,11 +49,6 @@ def execute_nmap(target, target_dir):
 
     # Restore the original target after Nmap
     target = original_target
-
-    IP_addr = obtainIP(target, result)
-
-    execute_lazyhunter(IP_addr, target_dir)
-
 
     if "Discovered open port 445/tcp" in result:
         print("\n[INFO] Port 445 detected. Running NetExec and Enum4Linux...")

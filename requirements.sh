@@ -55,18 +55,6 @@ done
 # Install additional tools manually
 cd "$INSTALL_DIR"
 
-# Install lazy-hunter
-if command -v lazyhunter &> /dev/null; then
-    echo "lazy-hunter is already installed ✅"
-else
-    echo "Installing lazy-hunter..."
-    sudo git clone https://github.com/iamunixtz/Lazy-Hunter.git "$INSTALL_DIR/Lazy-Hunter"
-    cd "$INSTALL_DIR/Lazy-Hunter" || exit
-    pip install --user -r requirements.txt --break-system-packages
-    sudo chmod +x lazyhunter.py
-    sudo ln -s "$INSTALL_DIR/Lazy-Hunter/lazyhunter.py" /usr/local/bin/lazyhunter
-fi
-
 # Install NetExec
 if command -v netexec &> /dev/null; then
     echo "netexec is already installed ✅"

@@ -159,21 +159,3 @@ def parse_netexec(results_file):
             parsed_results.append(line)
 
     return "\n".join(parsed_results)
-
-def parse_lazyhunter(results_file):
-    lines = read_file(results_file)
-    parsed_results = []
-    capturing = False 
-
-    for line in map(str.strip, lines): 
-        if line.startswith("[INFO] Target:"):
-            capturing = True
-            continue  
-
-        if line.startswith("[INFO] Scan Completed"):
-            break  
-
-        if capturing and line:  
-            parsed_results.append(line)
-
-    return "\n".join(parsed_results) or None 

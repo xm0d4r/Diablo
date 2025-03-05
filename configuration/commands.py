@@ -47,6 +47,7 @@ COMMAND = {
         "-s",                      # Check all available options
         "--connect-timeout", "5",  # Set connection timeout
         "--openssl-timeout", "5",  # Set OpenSSL timeout
+        "--quiet",                 # Quiet mode
         "{target}"                 # Target
     ],
     "webanalyze": [
@@ -66,10 +67,5 @@ COMMAND = {
         "--request-timeout", "10", # Request timeout
         "--connect-timeout", "10", # Connection timeout
         "--disable-tls-checks"    # Disable TLS checks
-    ],
-    "lazyhunter": [
-        "lazyhunter",              # Main command
-        "--ip", "{target}",        # Single IP to scan
-        "--cve+ports"              # Show CVEs with severity level and open ports
     ]
 }

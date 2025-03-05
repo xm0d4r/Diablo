@@ -5,7 +5,6 @@
 
 from .netexec import execute_netexec
 from .enum4linux import execute_enum4linux
-from .lazyhunter import execute_lazyhunter
 from .wpscan import execute_wpscan
 from .iis_shortname import execute_iis_shortname
 from .nmap import execute_nmap

@@ -9,9 +9,6 @@ from utils import create_folder, is_valid_ip_or_domain, signal_handler, get_targ
 from menu import show_menu, profile_banner
 from config import RESULTS_DIRECTORY
 
-# Global variable to handle program interruption (Ctrl+C)
-interrupted = False
-
 # Configure the signal for Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -29,17 +26,8 @@ def get_folder_name():
 # Run the profile
 def run_profile(profile, targets, execution_dir, folder_name):
     recon_profile = False
-    global interrupted, action_taken  # Access the global variables for interruption state and action
 
     for target in targets:
-        if interrupted:
-            if action_taken == 'st':  # Skip the current target
-                print(f"Skipping target: {target}")
-                continue  # Skip the current target and move to the next one
-            elif action_taken == 'sm':  # Skip the current module
-                print("Skipping the current module...")
-                break  # Skip the current module and move to the next one (the loop will continue with the next module)
-
         profile_banner(profile)
 
         if profile == "Recon":
@@ -61,8 +49,6 @@ def run_profile(profile, targets, execution_dir, folder_name):
             ]
 
             for module in modules:
-                if interrupted and action_taken == 'sm':  # Check if we need to skip the current module
-                    break  # Skip the current module and move to the next one
                 for constructed_target in built_targets:
                     module(constructed_target, target_dir)
 

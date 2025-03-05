@@ -3,7 +3,7 @@ from jinja2 import Environment, FileSystemLoader
 from core.utils import clean_url
 from templates.parser import (
     parse_nmap, parse_webanalyze, parse_testssl, parse_shcheck, 
-    parse_netexec, parse_enum4linux, parse_shortscan, parse_lazyhunter
+    parse_netexec, parse_enum4linux, parse_shortscan
 )
 
 def generate_html(results_dir, targets, folder_name):
@@ -21,8 +21,7 @@ def generate_html(results_dir, targets, folder_name):
         "enum4linux": "enum4linux.txt",
         "iis_shortname": "shortscan.txt",
         "netexec": "netexec.txt",
-        "wpscan": "wpscan.txt",
-        "lazyhunter":"lazyhunter.txt"
+        "wpscan": "wpscan.txt"
     }
       
     # Set up the Jinja2 environment and load the template
@@ -45,8 +44,7 @@ def generate_html(results_dir, targets, folder_name):
             'enum4linux_results': parse_enum4linux(os.path.join(target_dir, files['enum4linux'])),
             'iis_shortname_results': parse_shortscan(os.path.join(target_dir, files['iis_shortname'])),
             'netexec_results': parse_netexec(os.path.join(target_dir, files['netexec'])),
-            'wpscan_results': parse_netexec(os.path.join(target_dir, files['wpscan'])),
-            'lazyhunter_results': parse_lazyhunter(os.path.join(target_dir, files['lazyhunter']))
+            'wpscan_results': parse_netexec(os.path.join(target_dir, files['wpscan']))
         }
     
     # Render the summary HTML content using the template
